@@ -9,9 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import org.json.JSONObject;
+import java.util.List;
 
+import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.util.DataLoader;
+import agafonova.com.popularmovies.util.JsonUtils;
 import agafonova.com.popularmovies.util.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>{
@@ -39,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mSortBy = "popularity.desc";
         mLanguage = "en-US";
 
+        /*
+        * To Reviewers: you need to create an xml file in res/values
+        * use your own MovieDB key
+        * */
         try{
             mApiKey = getResources().getString(R.string.api_key);
         }
@@ -78,11 +84,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 args.getString("sort"), args.getString("language"), args.getString("apiKey"));
     }
 
+    /*
+    * Get parsed results from JsonUtils
+    * */
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
         try {
-            JSONObject jsonObject = new JSONObject(data);
-            Log.d(LOG_TAG, data);
+            List<Result> results = JsonUtils.parseResults(data);
         }
         catch(Exception e){
             e.printStackTrace();

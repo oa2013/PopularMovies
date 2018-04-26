@@ -14,7 +14,7 @@ public class Result {
     private String posterPath;
     private String originalLanguage;
     private String originalTitle;
-    private List<Integer> genreIds = null;
+    private List<String> genreIds = null;
     private String backdropPath;
     private String adult;
     private String overview;
@@ -25,7 +25,7 @@ public class Result {
     }
 
     public Result(String iVoteCount, String iId, String iVideo, String iVoteAverage, String iTitle, String iPopularity, String iPosterPath, String iOriginalLanguage,
-                  String iOriginalTitle, ArrayList<Integer> iGenreIds, String iBackdropPath, String iAdult, String iOverview, String iReleaseDate) {
+                  String iOriginalTitle, ArrayList<String> iGenreIds, String iBackdropPath, String iAdult, String iOverview, String iReleaseDate) {
         this.voteCount = iVoteCount;
         this.id = iId;
         this.video = iVideo;
@@ -114,11 +114,11 @@ public class Result {
         this.originalTitle = originalTitle;
     }
 
-    public List<Integer> getGenreIds() {
+    public List<String> getGenreIds() {
         return genreIds;
     }
 
-    public void setGenreIds(List<Integer> genreIds) {
+    public void setGenreIds(List<String> genreIds) {
         this.genreIds = genreIds;
     }
 
