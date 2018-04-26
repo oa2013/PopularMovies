@@ -3,7 +3,10 @@ package agafonova.com.popularmovies.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Result {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Result implements Parcelable{
 
     private String voteCount;
     private String id;
@@ -40,6 +43,49 @@ public class Result {
         this.adult = iAdult;
         this.overview = iOverview;
         this.releaseDate = iReleaseDate;
+    }
+
+    Result(Parcel in) {
+        this.voteCount = in.readString();
+        this.id = in.readString();
+        this.video = in.readString();
+        this.voteAverage = in.readString();
+        this.title = in.readString();
+        this.popularity = in.readString();
+        this.posterPath = in.readString();
+        this.originalLanguage = in.readString();
+        this.originalTitle = in.readString();
+
+        this.genreIds = new ArrayList<String>();
+        in.readStringList(genreIds);
+
+        this.backdropPath = in.readString();
+        this.adult = in.readString();
+        this.overview = in.readString();
+        this.releaseDate = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(voteCount);
+        dest.writeString(id);
+        dest.writeString(video);
+        dest.writeString(voteAverage);
+        dest.writeString(title);
+        dest.writeString(popularity);
+        dest.writeString(posterPath);
+        dest.writeString(originalLanguage);
+        dest.writeString(originalTitle);
+        dest.writeStringList(genreIds);
+        dest.writeString(backdropPath);
+        dest.writeString(adult);
+        dest.writeString(overview);
+        dest.writeString(releaseDate);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public String getVoteCount() {
@@ -154,4 +200,15 @@ public class Result {
         this.releaseDate = releaseDate;
     }
 
+    static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>() {
+        @Override
+        public Result createFromParcel(Parcel in) {
+            return new Result(in);
+        }
+
+        @Override
+        public Result[] newArray(int size) {
+            return new Result[size];
+        }
+    };
 }

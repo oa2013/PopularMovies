@@ -3,10 +3,12 @@ package agafonova.com.popularmovies.util;
 /*
 * MovieDB request format:
 * https://api.themoviedb.org/3/discover/movie?page=1&include_video=false&include_adult=false&sort_by=popularity.desc&language=en-US&api_key=MY_KEY'
+*
+* Poster request format:
+* http://image.tmdb.org/t/p/w185/askg3SMvhqEl4OL52YuvdtY40Yb.jpg
 */
 
 import android.net.Uri;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

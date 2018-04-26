@@ -3,10 +3,8 @@ package agafonova.com.popularmovies.util;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import agafonova.com.popularmovies.model.DiscoverMovie;
 import agafonova.com.popularmovies.model.Result;
 

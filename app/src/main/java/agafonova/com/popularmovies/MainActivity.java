@@ -8,13 +8,21 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import java.util.List;
-
+import agafonova.com.popularmovies.adapters.ResultAdapter;
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.util.DataLoader;
 import agafonova.com.popularmovies.util.JsonUtils;
 import agafonova.com.popularmovies.util.NetworkUtils;
+
+/*
+* @author Olga Agafonova
+* @date April 26, 2018
+* Android Nanodegree Movie Poster Project (stage 1)
+* */
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>{
 
@@ -24,12 +32,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private String mSortBy;
     private String mLanguage;
     private String mApiKey;
+    private List<Result> results = null;
+    private ListView posterView;
+    private ResultAdapter adapter;
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        posterView = (ListView)findViewById(R.id.listview_posters);
 
         if(getSupportLoaderManager().getLoader(0)!=null){
             getSupportLoaderManager().initLoader(0,null,this);
@@ -85,12 +98,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     /*
-    * Get parsed results from JsonUtils
+    * Get parsed movie list results from JsonUtils
+    * Load images if the list is not null
     * */
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
         try {
-            List<Result> results = JsonUtils.parseResults(data);
+            results = JsonUtils.parseResults(data);
+
+            adapter = new ResultAdapter(this, results);
+            posterView.setAdapter(adapter);
+
+            posterView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    //Detail activity stuff here
+                    //Result movieResult = adapter.getItem(i);
+                    //adapter.notifyDataSetChanged();
+                }
+            });
+
         }
         catch(Exception e){
             e.printStackTrace();

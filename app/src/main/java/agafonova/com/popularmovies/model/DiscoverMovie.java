@@ -2,8 +2,10 @@ package agafonova.com.popularmovies.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class DiscoverMovie {
+public class DiscoverMovie implements Parcelable {
 
     String page;
     String totalResults;
@@ -19,6 +21,26 @@ public class DiscoverMovie {
         this.totalResults = iTotalResults;
         this.totalPages = iTotalPages;
         this.results = iResults;
+    }
+
+    private DiscoverMovie(Parcel in) {
+        page = in.readString();
+        totalResults =  in.readString();
+        totalPages = in.readString();
+        in.readTypedList(results, Result.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(page);
+        dest.writeString(totalResults);
+        dest.writeString(totalPages);
+        dest.writeTypedList(results);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public String getPage() {
@@ -53,4 +75,15 @@ public class DiscoverMovie {
         this.results = results;
     }
 
+    static final Parcelable.Creator<DiscoverMovie> CREATOR = new Parcelable.Creator<DiscoverMovie>() {
+        @Override
+        public DiscoverMovie createFromParcel(Parcel in) {
+            return new DiscoverMovie(in);
+        }
+
+        @Override
+        public DiscoverMovie[] newArray(int size) {
+            return new DiscoverMovie[size];
+        }
+    };
 }
