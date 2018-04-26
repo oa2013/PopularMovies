@@ -7,6 +7,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,7 +26,7 @@ import agafonova.com.popularmovies.util.NetworkUtils;
 * Android Nanodegree Movie Poster Project (stage 1)
 * */
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>{
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, ResultAdapter.ResourceClickListener{
 
     private String mPageParam;
     private String mVideoParam;
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private List<Result> results = null;
     private ListView posterView;
     private ResultAdapter adapter;
+    private RecyclerView mRecyclerView;
+
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
 
     @Override
@@ -42,7 +46,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        posterView = (ListView)findViewById(R.id.listview_posters);
+        mRecyclerView = (RecyclerView) findViewById(R.id.rv_posters);
+
+        GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2, GridLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
 
         if(getSupportLoaderManager().getLoader(0)!=null){
             getSupportLoaderManager().initLoader(0,null,this);
@@ -56,7 +63,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         /*
         * To Reviewers: you need to create an xml file in res/values
-        * use your own MovieDB key
+        * and use your own MovieDB API key
+        * <resources>
+        * <string name="api_key">123456789</string>
+        * </resources>
         * */
         try{
             mApiKey = getResources().getString(R.string.api_key);
@@ -106,18 +116,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         try {
             results = JsonUtils.parseResults(data);
 
-            adapter = new ResultAdapter(this, results);
-            posterView.setAdapter(adapter);
-
-            posterView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                    //Detail activity stuff here
-                    //Result movieResult = adapter.getItem(i);
-                    //adapter.notifyDataSetChanged();
-                }
-            });
+            adapter = new ResultAdapter(this);
+            adapter.setData(results);
+            mRecyclerView.setAdapter(adapter);
 
         }
         catch(Exception e){
@@ -127,4 +128,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<String> loader) {}
+
+    @Override
+    public void onPosterClick(String data) {
+
+    }
 }
