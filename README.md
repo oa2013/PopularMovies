@@ -6,6 +6,13 @@ This project uses an API key from https://www.themoviedb.org/. You need to reque
 In the folder app/res/values/, create a resource xml file that has a string
 name = "api_key".
 
+```html
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="api_key">YOUR  KEY HERE</string>
+</resources>
+```
+
 In MainActivity.java, your key will be retrieved right here:
 
 ```java
