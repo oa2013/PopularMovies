@@ -5,13 +5,16 @@ This project uses an API key from https://www.themoviedb.org/. You need to reque
 
 In the folder app/res/values/, create a resource xml file in this format:
 
+```html
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="api_key">YOUR  KEY HERE</string>
 </resources>
+```
 
 In MainActivity.java, your key will be retrieved right here:
 
+```java
 try{
 	mApiKey = getResources().getString(R.string.api_key);
 }
@@ -19,5 +22,6 @@ catch(Exception e) {
 	e.printStackTrace();
 	mApiKey = "";
 }
+```
   
 You should now see movie posters on the application screen. 
