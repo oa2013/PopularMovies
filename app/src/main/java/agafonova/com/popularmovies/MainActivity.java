@@ -12,7 +12,10 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import agafonova.com.popularmovies.adapters.ResultAdapter;
 import agafonova.com.popularmovies.model.Result;
@@ -31,13 +34,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private String mPageParam;
     private String mVideoParam;
     private String mAdultParam;
-    private String mSortBy;
-    private String mLanguage;
+    private String mSortByParam;
+    private String mLanguageParam;
     private String mApiKey;
     private List<Result> results = null;
     private ListView posterView;
     private ResultAdapter adapter;
     private RecyclerView mRecyclerView;
+    private Button mPopularityButton;
+    private Button mRatingButton;
+    private boolean sortByPopularity = false;
+    private boolean sortByRating = false;
 
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
 
@@ -47,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_posters);
+        mPopularityButton = (Button) findViewById(R.id.sort_button_popularity);
+        mRatingButton = (Button) findViewById(R.id.sort_button_rating);
 
         GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2, GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -54,12 +63,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if(getSupportLoaderManager().getLoader(0)!=null){
             getSupportLoaderManager().initLoader(0,null,this);
         }
-
-        mPageParam = "1";
-        mVideoParam = "false";
-        mAdultParam = "false";
-        mSortBy = "popularity.desc";
-        mLanguage = "en-US";
 
         /*
         * To Reviewers: you need to create an xml file in res/values
@@ -76,29 +79,64 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mApiKey = "";
         }
 
-        getMovies(mPageParam, mVideoParam, mAdultParam, mSortBy, mLanguage, mApiKey);
-    }
-
-    public void getMovies(String page, String video, String adult, String sort, String language, String apiKey) {
-
+        /*
+        * Check network connection
+        * */
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
 
-            Bundle queryBundle = new Bundle();
-            queryBundle.putString("page", page);
-            queryBundle.putString("video", video);
-            queryBundle.putString("adult", adult);
-            queryBundle.putString("sort", sort);
-            queryBundle.putString("language", apiKey);
-            queryBundle.putString("apiKey", apiKey);
-            getSupportLoaderManager().restartLoader(0, queryBundle, this);
+            getMoviesByPopularity();
+
+            mPopularityButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sortByPopularity = true;
+
+                    if (results != null) {
+                        Collections.sort(results, new Result.PopularityComparator());
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
+
+            mRatingButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sortByRating = true;
+
+                    if (results != null) {
+                        Collections.sort(results, new Result.RatingComparator());
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
         }
         else {
             //Display network error in UI
         }
+    }
+
+    public void getMoviesByPopularity() {
+
+        mPageParam = "1";
+        mVideoParam = "false";
+        mAdultParam = "false";
+        mSortByParam = "popularity.desc";
+        mLanguageParam = "en-US";
+
+        Bundle queryBundle = new Bundle();
+        queryBundle.putString("page", mPageParam);
+        queryBundle.putString("video", mVideoParam);
+        queryBundle.putString("adult", mAdultParam);
+        queryBundle.putString("sort", mSortByParam);
+        queryBundle.putString("language", mLanguageParam);
+        queryBundle.putString("apiKey", mApiKey);
+
+        getSupportLoaderManager().restartLoader(0, queryBundle, this);
+
     }
 
     @Override
@@ -133,4 +171,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onPosterClick(String data) {
 
     }
+
+
+
 }

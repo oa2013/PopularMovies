@@ -1,6 +1,7 @@
 package agafonova.com.popularmovies.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import android.os.Parcel;
@@ -81,6 +82,28 @@ public class Result implements Parcelable{
         dest.writeString(adult);
         dest.writeString(overview);
         dest.writeString(releaseDate);
+    }
+
+    public static class RatingComparator implements Comparator<Result> {
+
+        public int compare(Result one, Result two)
+        {
+            double comparison = Double.parseDouble(two.voteAverage)-Double.parseDouble(one.voteAverage);
+            if(comparison > 0) return 1;
+            if(comparison < 0) return -1;
+            return 0;
+        }
+    }
+
+    public static class PopularityComparator implements Comparator<Result> {
+
+        public int compare(Result one, Result two)
+        {
+            double comparison = Double.parseDouble(two.popularity)-Double.parseDouble(one.popularity);
+            if(comparison > 0) return 1;
+            if(comparison < 0) return -1;
+            return 0;
+        }
     }
 
     @Override

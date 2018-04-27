@@ -29,6 +29,6 @@ public class DataLoader extends AsyncTaskLoader<String> {
 
     @Override
     public String loadInBackground() {
-        return NetworkUtils.getMoviesByPopularity(mPageParam, mVideoParam, mAdultParam, mSortBy, mLanguage, mApiKey);
+        return NetworkUtils.getMovies(mPageParam, mVideoParam, mAdultParam, mSortBy, mLanguage, mApiKey);
     }
 }
