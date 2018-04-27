@@ -47,6 +47,8 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
 
         try {
             Picasso.with(holder.itemView.getContext()).load(imagePath).into(holder.posterView);
+            holder.popularityTextView.setText("Popularity: " + String.format("%.1f",Float.parseFloat(oneMovie.getPopularity())));
+            holder.ratingTextView.setText("Rating: "+ String.format("%.1f",Float.parseFloat(oneMovie.getVoteAverage())));
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -70,10 +72,14 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
             implements View.OnClickListener {
 
         private ImageView posterView;
+        private TextView popularityTextView;
+        private TextView ratingTextView;
 
         public ResultAdapterViewHolder(View itemView) {
             super(itemView);
             posterView = (ImageView)itemView.findViewById(R.id.movie_poster);
+            popularityTextView = (TextView)itemView.findViewById(R.id.movie_popularity);
+            ratingTextView = (TextView)itemView.findViewById(R.id.movie_rating);
         }
 
         @Override

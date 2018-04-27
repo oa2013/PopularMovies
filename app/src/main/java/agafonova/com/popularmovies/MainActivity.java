@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -37,12 +39,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private String mSortByParam;
     private String mLanguageParam;
     private String mApiKey;
+
     private List<Result> results = null;
     private ListView posterView;
     private ResultAdapter adapter;
     private RecyclerView mRecyclerView;
+
     private Button mPopularityButton;
     private Button mRatingButton;
+    private TextView mErrorTextView;
     private boolean sortByPopularity = false;
     private boolean sortByRating = false;
 
@@ -56,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_posters);
         mPopularityButton = (Button) findViewById(R.id.sort_button_popularity);
         mRatingButton = (Button) findViewById(R.id.sort_button_rating);
+        mErrorTextView = (TextView) findViewById(R.id.error_message);
+
+        mErrorTextView.setVisibility(View.INVISIBLE);
 
         GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2, GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -79,6 +87,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mApiKey = "";
         }
 
+        checkNetworkAndGetData();
+
+    }
+
+    private void checkNetworkAndGetData() {
         /*
         * Check network connection
         * */
@@ -115,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             });
         }
         else {
-            //Display network error in UI
+            mErrorTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -161,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         catch(Exception e){
             e.printStackTrace();
+            mErrorTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -172,6 +186,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        checkNetworkAndGetData();
+    }
 
 
 }

@@ -22,6 +22,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/poster_height"
                 />
+
+            <TextView
+                android:id="@+id/movie_popularity"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/movie_metric_height"
+                android:layout_below="@+id/movie_poster"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/movie_rating"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/movie_metric_height"
+                android:layout_below="@+id/movie_popularity"
+                android:gravity="center"/>
+
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
