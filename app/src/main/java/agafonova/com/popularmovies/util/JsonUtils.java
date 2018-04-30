@@ -10,11 +10,11 @@ import agafonova.com.popularmovies.model.Result;
 
 public class JsonUtils {
 
-    public static List<Result> parseResults(String data) {
+    public static ArrayList<Result> parseResults(String data) {
 
         try {
             DiscoverMovie movies = new DiscoverMovie();
-            List<Result> results = new ArrayList<Result>();
+            ArrayList<Result> results = new ArrayList<Result>();
             JSONObject jsonObject = new JSONObject(data);
 
             movies.setPage(jsonObject.getString("page"));

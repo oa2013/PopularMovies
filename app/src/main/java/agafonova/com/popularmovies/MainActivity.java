@@ -1,6 +1,7 @@
 package agafonova.com.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.LoaderManager;
@@ -11,14 +12,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import agafonova.com.popularmovies.adapters.ResultAdapter;
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.util.DataLoader;
@@ -27,7 +25,7 @@ import agafonova.com.popularmovies.util.NetworkUtils;
 
 /*
 * @author Olga Agafonova
-* @date April 26, 2018
+* @date April 30, 2018
 * Android Nanodegree Movie Poster Project (stage 1)
 * */
 
@@ -40,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private String mLanguageParam;
     private String mApiKey;
 
-    private List<Result> results = null;
+    private ArrayList<Result> results = null;
     private ListView posterView;
     private ResultAdapter adapter;
     private RecyclerView mRecyclerView;
@@ -58,15 +56,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.rv_posters);
-        mPopularityButton = (Button) findViewById(R.id.sort_button_popularity);
-        mRatingButton = (Button) findViewById(R.id.sort_button_rating);
-        mErrorTextView = (TextView) findViewById(R.id.error_message);
+        if(savedInstanceState != null && savedInstanceState.containsKey("movies")) {
+            results = savedInstanceState.getParcelableArrayList("movies");
+        }
+
+        mRecyclerView = findViewById(R.id.rv_posters);
+        mPopularityButton = findViewById(R.id.sort_button_popularity);
+        mRatingButton = findViewById(R.id.sort_button_rating);
+        mErrorTextView = findViewById(R.id.error_message);
 
         mErrorTextView.setVisibility(View.INVISIBLE);
 
         GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2, GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
+
+        adapter = new ResultAdapter(this);
+        mRecyclerView.setAdapter(adapter);
 
         if(getSupportLoaderManager().getLoader(0)!=null){
             getSupportLoaderManager().initLoader(0,null,this);
@@ -88,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         checkNetworkAndGetData();
-
     }
 
     private void checkNetworkAndGetData() {
@@ -166,11 +170,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(Loader<String> loader, String data) {
         try {
             results = JsonUtils.parseResults(data);
-
-            adapter = new ResultAdapter(this);
             adapter.setData(results);
-            mRecyclerView.setAdapter(adapter);
-
+            adapter.notifyDataSetChanged();
         }
         catch(Exception e){
             e.printStackTrace();
@@ -181,16 +182,34 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<String> loader) {}
 
+    /*
+    * Send movie info to the Detail Activity
+    * */
     @Override
-    public void onPosterClick(String data) {
+    public void onPosterClick(String movieID) {
+        Intent intent = new Intent(getBaseContext(), DetailActivity.class);
 
+        for(Result movieResult : results)
+        {
+            if(movieResult.getId().equals(movieID)) {
+
+                //The Result object magically works with Parcelable here...
+                intent.putExtra("Movies", movieResult);
+                startActivity(intent);
+            }
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         checkNetworkAndGetData();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("movies", results);
+        super.onSaveInstanceState(outState);
     }
 
 

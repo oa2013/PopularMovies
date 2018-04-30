@@ -10,7 +10,7 @@ public class DiscoverMovie implements Parcelable {
     String page;
     String totalResults;
     String totalPages;
-    List<Result> results = null;
+    ArrayList<Result> results = null;
 
     public DiscoverMovie() {
 
@@ -67,11 +67,11 @@ public class DiscoverMovie implements Parcelable {
         this.totalPages = totalPages;
     }
 
-    public List<Result> getResults() {
+    public ArrayList<Result> getResults() {
         return results;
     }
 
-    public void setResults(List<Result> results) {
+    public void setResults(ArrayList<Result> results) {
         this.results = results;
     }
 

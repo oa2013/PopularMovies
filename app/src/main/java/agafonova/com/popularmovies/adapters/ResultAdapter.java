@@ -3,15 +3,17 @@ package agafonova.com.popularmovies.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
 import java.util.List;
+import java.util.Locale;
+
 import agafonova.com.popularmovies.R;
 import agafonova.com.popularmovies.model.Result;
 
@@ -47,8 +49,8 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
 
         try {
             Picasso.with(holder.itemView.getContext()).load(imagePath).into(holder.posterView);
-            holder.popularityTextView.setText("Popularity: " + String.format("%.1f",Float.parseFloat(oneMovie.getPopularity())));
-            holder.ratingTextView.setText("Rating: "+ String.format("%.1f",Float.parseFloat(oneMovie.getVoteAverage())));
+            holder.popularityTextView.setText("Popularity: " + String.format(Locale.US,"%.1f",Float.parseFloat(oneMovie.getPopularity())));
+            holder.ratingTextView.setText("Rating: "+ String.format(Locale.US, "%.1f",Float.parseFloat(oneMovie.getVoteAverage())));
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -77,9 +79,10 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
 
         public ResultAdapterViewHolder(View itemView) {
             super(itemView);
-            posterView = (ImageView)itemView.findViewById(R.id.movie_poster);
-            popularityTextView = (TextView)itemView.findViewById(R.id.movie_popularity);
-            ratingTextView = (TextView)itemView.findViewById(R.id.movie_rating);
+            posterView = itemView.findViewById(R.id.movie_poster);
+            popularityTextView = itemView.findViewById(R.id.movie_popularity);
+            ratingTextView = itemView.findViewById(R.id.movie_rating);
+            posterView.setOnClickListener(this);
         }
 
         @Override

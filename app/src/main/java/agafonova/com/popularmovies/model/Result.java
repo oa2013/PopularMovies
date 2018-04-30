@@ -223,7 +223,7 @@ public class Result implements Parcelable{
         this.releaseDate = releaseDate;
     }
 
-    static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>() {
+    public static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>() {
         @Override
         public Result createFromParcel(Parcel in) {
             return new Result(in);

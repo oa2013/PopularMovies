@@ -10,8 +10,8 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardCornerRadius="2dp"
-        card_view:contentPaddingBottom="@dimen/card_dimen">
+        android:background="@color/colorPrimaryDark"
+        card_view:cardCornerRadius="2dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -21,6 +21,10 @@
                 android:id="@+id/movie_poster"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/poster_height"
+                android:background="@color/colorPrimaryDark"
+                android:contentDescription="@string/placeholder"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 />
 
             <TextView
@@ -28,6 +32,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/movie_metric_height"
                 android:layout_below="@+id/movie_poster"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/movie_metric_text_size"
                 android:gravity="center"/>
 
             <TextView
@@ -35,6 +42,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/movie_metric_height"
                 android:layout_below="@+id/movie_popularity"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/movie_metric_text_size"
                 android:gravity="center"/>
 
         </RelativeLayout>
