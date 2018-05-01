@@ -37,9 +37,9 @@ public class DetailActivity extends AppCompatActivity {
         try {
             Result result = intent.getParcelableExtra("Movies");
 
-            mTitleView.setText("Title: " + result.getTitle());
-            mReleaseDateView.setText("Release date: " + result.getReleaseDate());
-            mVoteAverageView.setText("Popularity: " + result.getVoteAverage());
+            mTitleView.setText(result.getTitle());
+            mReleaseDateView.setText(result.getReleaseDate());
+            mVoteAverageView.setText(result.getVoteAverage());
             mPlotSynopsisView.setText(result.getOverview());
 
             String imagePath = IMAGE_URL + result.getPosterPath();

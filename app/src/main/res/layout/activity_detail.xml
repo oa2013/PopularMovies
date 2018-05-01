@@ -9,10 +9,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<LinearLayout
+<RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/poster_detail"
@@ -21,7 +20,19 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:contentDescription="@string/placeholder"
         android:src="@color/colorPrimary"/>
+
+    <TextView
+        android:id="@+id/title_label"
+        style="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textColor="@color/colorAccent"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/detail_padding"
+        android:layout_marginStart="@dimen/detail_padding"
+        android:text="@string/title"
+        android:layout_below="@+id/poster_detail"/>
 
     <TextView
         android:id="@+id/title_text"
@@ -30,8 +41,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/detail_padding"
-        android:layout_marginLeft="@dimen/detail_padding"
-        android:text="@string/placeholder" />
+        android:layout_marginStart="@dimen/detail_padding"
+        android:text="@string/placeholder"
+        android:layout_toRightOf="@+id/title_label"
+        android:layout_below="@+id/poster_detail"/>
+
+    <TextView
+        android:id="@+id/release_date_label"
+        style="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textColor="@color/colorAccent"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/detail_padding"
+        android:layout_marginStart="@dimen/detail_padding"
+        android:text="@string/release_date"
+        android:layout_below="@+id/title_text"/>
 
     <TextView
         android:id="@+id/release_date_text"
@@ -40,8 +64,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/detail_padding"
-        android:layout_marginLeft="@dimen/detail_padding"
-        android:text="@string/placeholder" />
+        android:layout_marginStart="@dimen/detail_padding"
+        android:text="@string/placeholder"
+        android:layout_below="@+id/title_text"
+        android:layout_toRightOf="@id/release_date_label"/>
+
+    <TextView
+        android:id="@+id/vote_average_label"
+        style="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textColor="@color/colorAccent"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/detail_padding"
+        android:layout_marginStart="@dimen/detail_padding"
+        android:text="@string/popularity"
+        android:layout_below="@+id/release_date_text" />
 
     <TextView
         android:id="@+id/vote_average_text"
@@ -50,8 +87,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/detail_padding"
-        android:layout_marginLeft="@dimen/detail_padding"
-        android:text="@string/placeholder" />
+        android:layout_marginStart="@dimen/detail_padding"
+        android:text="@string/placeholder"
+        android:layout_below="@+id/release_date_text"
+        android:layout_toRightOf="@+id/release_date_label"/>
 
     <TextView
         android:id="@+id/plot_synopsis_text"
@@ -60,10 +99,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/detail_padding"
-        android:layout_marginLeft="@dimen/detail_padding"
+        android:layout_marginStart="@dimen/detail_padding"
         android:layout_marginBottom="@dimen/detail_padding"
-        android:text="@string/placeholder" />
+        android:text="@string/placeholder"
+        android:layout_below="@+id/vote_average_text"/>
 
-</LinearLayout>
+</RelativeLayout>
 
 </ScrollView>
