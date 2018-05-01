@@ -10,27 +10,33 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import agafonova.com.popularmovies.model.Result;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class DetailActivity extends AppCompatActivity {
 
     private static final String IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
 
-    private TextView mTitleView;
-    private TextView mReleaseDateView;
-    private TextView mVoteAverageView;
-    private TextView mPlotSynopsisView;
-    private ImageView mPosterView;
+    @BindView(R.id.title_text)
+    TextView mTitleView;
+
+    @BindView(R.id.release_date_text)
+    TextView mReleaseDateView;
+
+    @BindView(R.id.vote_average_text)
+    TextView mVoteAverageView;
+
+    @BindView(R.id.plot_synopsis_text)
+    TextView mPlotSynopsisView;
+
+    @BindView(R.id.poster_detail)
+    ImageView mPosterView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
-        mTitleView = findViewById(R.id.title_text);
-        mReleaseDateView = findViewById(R.id.release_date_text);
-        mVoteAverageView = findViewById(R.id.vote_average_text);
-        mPlotSynopsisView = findViewById(R.id.plot_synopsis_text);
-        mPosterView = findViewById(R.id.poster_detail);
+        ButterKnife.bind(this);
 
         Intent intent = getIntent();
 

@@ -10,44 +10,58 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import agafonova.com.popularmovies.adapters.ResultAdapter;
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.util.DataLoader;
+import agafonova.com.popularmovies.util.DataLoader2;
 import agafonova.com.popularmovies.util.JsonUtils;
 import agafonova.com.popularmovies.util.NetworkUtils;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /*
 * @author Olga Agafonova
-* @date April 30, 2018
-* Android Nanodegree Movie Poster Project (stage 1)
+* @date May 1, 2018
+* Android Nanodegree Movie Poster Project
 * */
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, ResultAdapter.ResourceClickListener{
 
-    private String mPageParam;
-    private String mVideoParam;
-    private String mAdultParam;
-    private String mSortByParam;
-    private String mLanguageParam;
     private String mApiKey;
-
-    private ArrayList<Result> results = null;
+    private ArrayList<Result> popularityResults = null;
+    private ArrayList<Result> topRatedResults = null;
     private ListView posterView;
     private ResultAdapter adapter;
-    private RecyclerView mRecyclerView;
 
-    private Button mPopularityButton;
-    private Button mRatingButton;
-    private TextView mErrorTextView;
+    @BindView(R.id.rv_posters)
+    RecyclerView mRecyclerView;
+
+    @BindView(R.id.sort_button_popularity)
+    Button mPopularityButton;
+
+    @BindView(R.id.sort_button_rating)
+    Button mRatingButton;
+
+    @BindView(R.id.error_message)
+    TextView mErrorTextView;
+
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+
     private boolean sortByPopularity = false;
     private boolean sortByRating = false;
+
+    private static final int loader1 = 1;
+    private static final int loader2 = 2;
 
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
 
@@ -55,26 +69,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         if(savedInstanceState != null && savedInstanceState.containsKey("movies")) {
-            results = savedInstanceState.getParcelableArrayList("movies");
+            popularityResults = savedInstanceState.getParcelableArrayList("movies");
         }
-
-        mRecyclerView = findViewById(R.id.rv_posters);
-        mPopularityButton = findViewById(R.id.sort_button_popularity);
-        mRatingButton = findViewById(R.id.sort_button_rating);
-        mErrorTextView = findViewById(R.id.error_message);
 
         mErrorTextView.setVisibility(View.INVISIBLE);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2, GridLayoutManager.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, numberOfColumns(), GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
 
         adapter = new ResultAdapter(this);
         mRecyclerView.setAdapter(adapter);
 
-        if(getSupportLoaderManager().getLoader(0)!=null){
-            getSupportLoaderManager().initLoader(0,null,this);
+        if(getSupportLoaderManager().getLoader(1)!=null){
+            getSupportLoaderManager().initLoader(1,null,this);
+        }
+
+        if(getSupportLoaderManager().getLoader(2)!=null){
+            getSupportLoaderManager().initLoader(2,null,this);
         }
 
         /*
@@ -95,6 +109,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         checkNetworkAndGetData();
     }
 
+    private int numberOfColumns() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int widthDivider = 400;
+        int width = displayMetrics.widthPixels;
+        int nColumns = width / widthDivider;
+        if (nColumns < 2) return 2;
+        return nColumns;
+    }
+
     private void checkNetworkAndGetData() {
         /*
         * Check network connection
@@ -105,15 +129,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if (networkInfo != null && networkInfo.isConnected()) {
 
-            getMoviesByPopularity();
+            getMoviesByPopularityAndTopRating();
 
             mPopularityButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     sortByPopularity = true;
 
-                    if (results != null) {
-                        Collections.sort(results, new Result.PopularityComparator());
+                    if (popularityResults != null) {
+                        Collections.sort(popularityResults, new Result.PopularityComparator());
+                        adapter.setData(popularityResults);
                         adapter.notifyDataSetChanged();
                     }
                 }
@@ -124,8 +149,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 public void onClick(View v) {
                     sortByRating = true;
 
-                    if (results != null) {
-                        Collections.sort(results, new Result.RatingComparator());
+                    if (topRatedResults != null) {
+
+                        Collections.sort(topRatedResults, new Result.RatingComparator());
+                        adapter.setData(topRatedResults);
                         adapter.notifyDataSetChanged();
                     }
                 }
@@ -136,30 +163,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
-    public void getMoviesByPopularity() {
-
-        mPageParam = "1";
-        mVideoParam = "false";
-        mAdultParam = "false";
-        mSortByParam = "popularity.desc";
-        mLanguageParam = "en-US";
+    public void getMoviesByPopularityAndTopRating() {
 
         Bundle queryBundle = new Bundle();
-        queryBundle.putString("page", mPageParam);
-        queryBundle.putString("video", mVideoParam);
-        queryBundle.putString("adult", mAdultParam);
-        queryBundle.putString("sort", mSortByParam);
-        queryBundle.putString("language", mLanguageParam);
         queryBundle.putString("apiKey", mApiKey);
 
-        getSupportLoaderManager().restartLoader(0, queryBundle, this);
-
+        getSupportLoaderManager().restartLoader(1, queryBundle, this);
+        getSupportLoaderManager().restartLoader(2, queryBundle, this);
     }
 
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
-        return new DataLoader(this, args.getString("page"), args.getString("video"), args.getString("adult"),
-                args.getString("sort"), args.getString("language"), args.getString("apiKey"));
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        switch (id) {
+            case loader1:
+                return new DataLoader(this, args.getString("apiKey"));
+            case loader2:
+                return new DataLoader2(this, args.getString("apiKey"));
+        }
+
+        return null;
     }
 
     /*
@@ -168,14 +193,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     * */
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
-        try {
-            results = JsonUtils.parseResults(data);
-            adapter.setData(results);
-            adapter.notifyDataSetChanged();
+
+        progressBar.setVisibility(View.GONE);
+        int id = loader.getId();
+
+        if(loader.getId() == loader1) {
+            try {
+                popularityResults = JsonUtils.parseResults(data);
+                adapter.setData(popularityResults);
+                adapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
+                mErrorTextView.setVisibility(View.VISIBLE);
+            }
         }
-        catch(Exception e){
-            e.printStackTrace();
-            mErrorTextView.setVisibility(View.VISIBLE);
+        else if (loader.getId() == loader2) {
+            try {
+                topRatedResults = JsonUtils.parseResults(data);
+                adapter.setData(topRatedResults);
+                adapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
+                mErrorTextView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -189,11 +229,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onPosterClick(String movieID) {
         Intent intent = new Intent(getBaseContext(), DetailActivity.class);
 
-        for(Result movieResult : results)
+        for(Result movieResult : popularityResults)
         {
             if(movieResult.getId().equals(movieID)) {
 
-                //The Result object magically works with Parcelable here...
+                intent.putExtra("Movies", movieResult);
+                startActivity(intent);
+            }
+        }
+
+        for(Result movieResult : topRatedResults)
+        {
+            if(movieResult.getId().equals(movieID)) {
+
                 intent.putExtra("Movies", movieResult);
                 startActivity(intent);
             }
@@ -208,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("movies", results);
+        outState.putParcelableArrayList("movies", popularityResults);
         super.onSaveInstanceState(outState);
     }
 
