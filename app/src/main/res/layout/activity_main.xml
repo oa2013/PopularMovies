@@ -12,19 +12,6 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/sort_button_popularity"
-        android:layout_width="@dimen/button_width"
-        android:layout_height="@dimen/button_height"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/colorPrimary"
-        android:padding="@dimen/button_padding"
-        android:text="@string/sort_popularity"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
         android:id="@+id/sort_button_rating"
         android:layout_width="@dimen/button_width"
         android:layout_height="@dimen/button_height"
@@ -35,6 +22,19 @@
         android:text="@string/sort_rating"
         android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/sort_button_popularity"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/colorPrimary"
+        android:padding="@dimen/button_padding"
+        android:text="@string/sort_popularity"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar

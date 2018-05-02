@@ -2,6 +2,7 @@ package agafonova.com.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.LoaderManager;
@@ -11,7 +12,6 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
 
 /*
 * @author Olga Agafonova
-* @date May 1, 2018
+* @date May 2, 2018
 * Android Nanodegree Movie Poster Project
 * */
 
@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
-    private boolean sortByPopularity = false;
-    private boolean sortByRating = false;
+    private boolean sortByPopularity;
+    private boolean sortByRating;
 
     private static final int loader1 = 1;
     private static final int loader2 = 2;
@@ -71,42 +71,64 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        if(savedInstanceState != null && savedInstanceState.containsKey("movies")) {
-            popularityResults = savedInstanceState.getParcelableArrayList("movies");
-        }
-
         mErrorTextView.setVisibility(View.INVISIBLE);
 
         GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, numberOfColumns(), GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        adapter = new ResultAdapter(this);
-        mRecyclerView.setAdapter(adapter);
-
-        if(getSupportLoaderManager().getLoader(1)!=null){
-            getSupportLoaderManager().initLoader(1,null,this);
+        if (getSupportLoaderManager().getLoader(1) != null) {
+            getSupportLoaderManager().initLoader(1, null, this);
         }
 
-        if(getSupportLoaderManager().getLoader(2)!=null){
-            getSupportLoaderManager().initLoader(2,null,this);
+        if (getSupportLoaderManager().getLoader(2) != null) {
+            getSupportLoaderManager().initLoader(2, null, this);
         }
 
         /*
-        * To Reviewers: you need to create an xml file in res/values
-        * and use your own MovieDB API key
-        * <resources>
-        * <string name="api_key">123456789</string>
-        * </resources>
-        * */
-        try{
+         * To Reviewers: you need to create an xml file in res/values
+         * and use your own MovieDB API key
+         * <resources>
+         * <string name="api_key">123456789</string>
+         * </resources>
+         * */
+        try {
             mApiKey = getResources().getString(R.string.api_key);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             mApiKey = "";
         }
 
-        checkNetworkAndGetData();
+        if(savedInstanceState == null) {
+
+            sortByRating = false;
+            sortByPopularity = false;
+            adapter = new ResultAdapter(this);
+            mRecyclerView.setAdapter(adapter);
+
+            checkNetworkAndGetData();
+        }
+        else if (savedInstanceState != null){
+
+            sortByPopularity = savedInstanceState.getBoolean("sortByPopularity");
+            sortByRating = savedInstanceState.getBoolean("sortByRating");
+
+            popularityResults = savedInstanceState.getParcelableArrayList("moviesPopular");
+            topRatedResults = savedInstanceState.getParcelableArrayList("moviesTopRated");
+
+            adapter = new ResultAdapter(this);
+            mRecyclerView.setAdapter(adapter);
+
+            if (sortByPopularity == true) {
+                adapter.setData(popularityResults);
+                adapter.notifyDataSetChanged();
+            }
+
+            if (sortByRating == true) {
+                adapter.setData(topRatedResults);
+                adapter.notifyDataSetChanged();
+            }
+
+        }
     }
 
     private int numberOfColumns() {
@@ -135,9 +157,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 @Override
                 public void onClick(View v) {
                     sortByPopularity = true;
+                    sortByRating = false;
 
                     if (popularityResults != null) {
-                        Collections.sort(popularityResults, new Result.PopularityComparator());
+                        //Collections.sort(popularityResults, new Result.PopularityComparator());
                         adapter.setData(popularityResults);
                         adapter.notifyDataSetChanged();
                     }
@@ -148,10 +171,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 @Override
                 public void onClick(View v) {
                     sortByRating = true;
+                    sortByPopularity = false;
 
                     if (topRatedResults != null) {
-
-                        Collections.sort(topRatedResults, new Result.RatingComparator());
+                        //Collections.sort(topRatedResults, new Result.RatingComparator());
                         adapter.setData(topRatedResults);
                         adapter.notifyDataSetChanged();
                     }
@@ -195,27 +218,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(Loader<String> loader, String data) {
 
         progressBar.setVisibility(View.GONE);
-        int id = loader.getId();
 
-        if(loader.getId() == loader1) {
-            try {
+        try {
+
+            if(loader.getId() == 1) {
                 popularityResults = JsonUtils.parseResults(data);
-                adapter.setData(popularityResults);
-                adapter.notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
-                mErrorTextView.setVisibility(View.VISIBLE);
             }
-        }
-        else if (loader.getId() == loader2) {
-            try {
+
+            if(loader.getId() == 2 ) {
                 topRatedResults = JsonUtils.parseResults(data);
+            }
+
+            if(sortByRating == true) {
                 adapter.setData(topRatedResults);
                 adapter.notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
-                mErrorTextView.setVisibility(View.VISIBLE);
             }
+            else {
+                adapter.setData(popularityResults);
+                adapter.notifyDataSetChanged();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mErrorTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -256,9 +281,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("movies", popularityResults);
+        outState.putParcelableArrayList("moviesPopular", popularityResults);
+        outState.putParcelableArrayList("moviesTopRated", topRatedResults);
+        outState.putBoolean("sortByPopularity",sortByPopularity);
+        outState.putBoolean("sortByRating",sortByRating);
         super.onSaveInstanceState(outState);
     }
 
-
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        popularityResults = savedInstanceState.getParcelableArrayList("moviesPopular");
+        topRatedResults = savedInstanceState.getParcelableArrayList("moviesTopRated");
+        sortByPopularity = savedInstanceState.getBoolean("sortByPopularity");
+        sortByRating = savedInstanceState.getBoolean("sortByRating");
+    }
 }

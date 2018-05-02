@@ -3,12 +3,9 @@ package agafonova.com.popularmovies;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Property;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
-
 import agafonova.com.popularmovies.model.Result;
 import butterknife.BindView;
 import butterknife.ButterKnife;
