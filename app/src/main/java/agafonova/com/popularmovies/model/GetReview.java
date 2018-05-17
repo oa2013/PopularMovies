@@ -1,38 +1,40 @@
 package agafonova.com.popularmovies.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ArrayAdapter;
+import java.util.ArrayList;
 
-public class DiscoverMovie implements Parcelable {
+public class GetReview implements Parcelable {
 
+    String id;
     String page;
     String totalResults;
     String totalPages;
-    ArrayList<Result> results = null;
+    ArrayList<ReviewResult> results = null;
 
-    public DiscoverMovie() {
+    public GetReview() {
 
     }
 
-    public DiscoverMovie(String iPage, String iTotalResults, String iTotalPages, ArrayList<Result> iResults) {
+    public GetReview(String iId, String iPage, String iTotalResults, String iTotalPages, ArrayList<ReviewResult> iResults) {
+        this.id = iId;
         this.page = iPage;
         this.totalResults = iTotalResults;
         this.totalPages = iTotalPages;
         this.results = iResults;
     }
 
-    private DiscoverMovie(Parcel in) {
+    private GetReview(Parcel in) {
+        id = in.readString();
         page = in.readString();
         totalResults =  in.readString();
         totalPages = in.readString();
-        in.readTypedList(results, Result.CREATOR);
+        in.readTypedList(results, ReviewResult.CREATOR);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(page);
         dest.writeString(totalResults);
         dest.writeString(totalPages);
@@ -42,6 +44,14 @@ public class DiscoverMovie implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPage() {
@@ -68,23 +78,23 @@ public class DiscoverMovie implements Parcelable {
         this.totalPages = totalPages;
     }
 
-    public ArrayList<Result> getResults() {
+    public ArrayList<ReviewResult> getResults() {
         return results;
     }
 
-    public void setResults(ArrayList<Result> results) {
+    public void setResults(ArrayList<ReviewResult> results) {
         this.results = results;
     }
 
-    static final Parcelable.Creator<DiscoverMovie> CREATOR = new Parcelable.Creator<DiscoverMovie>() {
+    static final Parcelable.Creator<GetReview> CREATOR = new Parcelable.Creator<GetReview>() {
         @Override
-        public DiscoverMovie createFromParcel(Parcel in) {
-            return new DiscoverMovie(in);
+        public GetReview createFromParcel(Parcel in) {
+            return new GetReview(in);
         }
 
         @Override
-        public DiscoverMovie[] newArray(int size) {
-            return new DiscoverMovie[size];
+        public GetReview[] newArray(int size) {
+            return new GetReview[size];
         }
     };
 }
