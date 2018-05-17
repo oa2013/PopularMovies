@@ -6,15 +6,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/error_message_detail"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_width"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:padding="@dimen/button_padding"
+        android:text="@string/error_trailer"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintTop_toBottomOf="@+id/sort_button_rating" />
+
+    <ProgressBar
+        android:id="@+id/progressBarDetail"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:progressBackgroundTint="@color/colorAccent"
+        android:layout_marginTop="42dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/poster_detail"
         android:layout_width="match_parent"
         android:layout_height="@dimen/poster_height"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="32dp"
         android:contentDescription="@string/placeholder"
         android:src="@color/colorPrimary"/>
+
+    <VideoView
+        android:id="@+id/movieVideoView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/poster_height"
+        android:layout_marginTop="@dimen/detail_padding"
+        android:layout_marginStart="@dimen/detail_padding"
+        android:layout_below="@+id/poster_detail"/>
 
     <TextView
         android:id="@+id/title_label"
@@ -25,7 +59,7 @@
         android:layout_marginTop="@dimen/detail_padding"
         android:layout_marginStart="@dimen/detail_padding"
         android:text="@string/title"
-        android:layout_below="@+id/poster_detail"/>
+        android:layout_below="@+id/movieVideoView"/>
 
     <TextView
         android:id="@+id/title_text"
@@ -37,7 +71,7 @@
         android:layout_marginStart="@dimen/detail_padding"
         android:text="@string/placeholder"
         android:layout_toRightOf="@+id/title_label"
-        android:layout_below="@+id/poster_detail"/>
+        android:layout_below="@+id/movieVideoView"/>
 
     <TextView
         android:id="@+id/release_date_label"
@@ -96,5 +130,17 @@
         android:layout_marginBottom="@dimen/detail_padding"
         android:text="@string/placeholder"
         android:layout_below="@+id/vote_average_text"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_reviews"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/detail_padding"
+        android:layout_marginStart="@dimen/detail_padding"
+        android:layout_marginBottom="@dimen/detail_padding"
+        android:scrollbars="vertical"
+        android:layout_below="@+id/plot_synopsis_text">
+
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

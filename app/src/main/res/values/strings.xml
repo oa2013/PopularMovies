@@ -7,4 +7,5 @@
     <string name="title">Title: </string>
     <string name="release_date">Release Date: </string>
     <string name="popularity">Popularity: </string>
+    <string name="error_trailer">Error: unable to load video</string>
 </resources>

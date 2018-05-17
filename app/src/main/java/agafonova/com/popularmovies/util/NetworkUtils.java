@@ -148,7 +148,7 @@ public class NetworkUtils {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-        BASE_URL_REVIEWS  =  BASE_URL_REVIEWS  + "/" + movieID + "/reviews?api_key=";
+        BASE_URL_REVIEWS  =  BASE_URL_REVIEWS + movieID + "/reviews?";
 
         try {
             Uri builtURI = Uri.parse(BASE_URL_REVIEWS).buildUpon()
@@ -203,7 +203,7 @@ public class NetworkUtils {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-        BASE_URL_TRAILERS  =  BASE_URL_TRAILERS  + "/" + movieID + "/videos?api_key=";
+        BASE_URL_TRAILERS  =  BASE_URL_TRAILERS + movieID + "/videos?";
 
         try {
             Uri builtURI = Uri.parse(BASE_URL_TRAILERS).buildUpon()
