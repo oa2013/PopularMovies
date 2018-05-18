@@ -2,20 +2,21 @@ package agafonova.com.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.VideoView;
 import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.model.ReviewResult;
 import agafonova.com.popularmovies.model.TrailerResult;
@@ -27,7 +28,7 @@ import butterknife.ButterKnife;
 
 /*
  * @author Olga Agafonova
- * @date May 17, 2018
+ * @date May 18, 2018
  * Android Nanodegree Movie Poster Project
  * */
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
@@ -53,9 +54,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @BindView(R.id.progressBarDetail)
     ProgressBar progressBar;
 
-    @BindView(R.id.movieVideoView)
-    VideoView mVideoView;
-
     @BindView(R.id.error_message_detail)
     TextView mErrorTextView;
 
@@ -79,8 +77,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             Result result = intent.getParcelableExtra("Movies");
 
             mTitleView.setText(result.getTitle());
-            mReleaseDateView.setText(result.getReleaseDate());
-            mVoteAverageView.setText(result.getVoteAverage());
+
+            SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+            Date releaseDate = format.parse(result.getReleaseDate());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(releaseDate);
+            int year = calendar.get(Calendar.YEAR);
+
+            mReleaseDateView.setText(Integer.toString(year));
+            mVoteAverageView.setText(result.getVoteAverage() + "/10");
             mPlotSynopsisView.setText(result.getOverview());
 
             String imagePath = IMAGE_URL + result.getPosterPath();
@@ -161,14 +166,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
                 if(trailerResults != null) {
 
+                    //There can be multiple trailers! Need a recycler view here
                     String path = YOUTUBE_URL + trailerResults.get(0).getKey();
-
-//                    mVideoView.setVideoPath(path);
-//                    MediaController mc = new MediaController(this);
-//                    mVideoView.setMediaController(mc);
-//                    mVideoView.requestFocus();
-//                    mVideoView.start();
-//                    mc.show();
                 }
             }
         } catch (Exception e) {
