@@ -1,10 +1,8 @@
 package agafonova.com.popularmovies.model;
 
 import java.util.ArrayList;
-import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ArrayAdapter;
 
 public class DiscoverMovie implements Parcelable {
 

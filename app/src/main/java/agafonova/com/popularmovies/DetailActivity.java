@@ -1,22 +1,20 @@
 package agafonova.com.popularmovies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.model.ReviewResult;
 import agafonova.com.popularmovies.model.TrailerResult;
@@ -35,6 +33,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     private static final String IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
     private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+    private static final int loader1 = 1;
 
     @BindView(R.id.title_text)
     TextView mTitleView;
@@ -57,13 +56,14 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @BindView(R.id.error_message_detail)
     TextView mErrorTextView;
 
-    private static final int loader1 = 1;
-    private static final int loader2 = 2;
+    @BindView(R.id.review_button)
+    Button mReviewButton;
+
     private String mApiKey;
     private String mMovieID;
 
     private ArrayList<TrailerResult> trailerResults = null;
-    private ArrayList<ReviewResult> reviewResults = null;
+    private Result result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         Intent intent = getIntent();
 
         try {
-            Result result = intent.getParcelableExtra("Movies");
+            result = intent.getParcelableExtra("Movies");
 
             mTitleView.setText(result.getTitle());
 
@@ -98,10 +98,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 getSupportLoaderManager().initLoader(1, null, this);
             }
 
-            if (getSupportLoaderManager().getLoader(2) != null) {
-                getSupportLoaderManager().initLoader(2, null, this);
-            }
-
             mErrorTextView.setVisibility(View.INVISIBLE);
             mMovieID = result.getId();
 
@@ -119,35 +115,34 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 mApiKey = "";
             }
 
-            getReviewsAndTrailer();
+            getMovieTrailers();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        mReviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), ReviewActivity.class);
+                intent.putExtra("MovieID", result.getId());
+                intent.putExtra("ApiKey", mApiKey);
+                startActivity(intent);
+            }
+        });
     }
 
-    public void getReviewsAndTrailer() {
-
+    public void getMovieTrailers() {
         Bundle queryBundle = new Bundle();
         queryBundle.putString("apiKey", mApiKey);
         queryBundle.putString("movieID", mMovieID);
-
         getSupportLoaderManager().restartLoader(1, queryBundle, this);
-        getSupportLoaderManager().restartLoader(2, queryBundle, this);
     }
 
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
         progressBar.setVisibility(View.VISIBLE);
-
-        switch (id) {
-            case loader1:
-                return new ReviewLoader(this, args.getString("apiKey"), args.getString("movieID"));
-            case loader2:
-                return new TrailerLoader(this, args.getString("apiKey"), args.getString("movieID"));
-        }
-
-        return null;
+        return new TrailerLoader(this, args.getString("apiKey"), args.getString("movieID"));
     }
 
     @Override
@@ -156,25 +151,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         try {
 
-            if(loader.getId() == 1) {
-                reviewResults = JsonUtils.parseReviews(data);
-            }
+            trailerResults = JsonUtils.parseTrailers(data);
 
-            if(loader.getId() == 2 ) {
-
-                trailerResults = JsonUtils.parseTrailers(data);
-
-                if(trailerResults != null) {
-
-                    //There can be multiple trailers! Need a recycler view here
-                    String path = YOUTUBE_URL + trailerResults.get(0).getKey();
-                }
+            if(trailerResults != null) {
+                //There can be multiple trailers! Need a recycler view here
+                // String path = YOUTUBE_URL + trailerResults.get(0).getKey();
             }
         } catch (Exception e) {
             e.printStackTrace();
             mErrorTextView.setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override

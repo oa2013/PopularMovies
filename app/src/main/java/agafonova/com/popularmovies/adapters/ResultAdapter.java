@@ -1,19 +1,15 @@
 package agafonova.com.popularmovies.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Locale;
-
 import agafonova.com.popularmovies.R;
 import agafonova.com.popularmovies.model.Result;
 

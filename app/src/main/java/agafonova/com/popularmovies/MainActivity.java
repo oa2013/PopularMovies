@@ -2,7 +2,6 @@ package agafonova.com.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.LoaderManager;
@@ -18,7 +17,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.ArrayList;
-import java.util.Collections;
 import agafonova.com.popularmovies.adapters.ResultAdapter;
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.util.DataLoader;
