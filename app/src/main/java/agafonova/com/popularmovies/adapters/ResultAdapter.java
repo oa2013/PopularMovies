@@ -46,8 +46,8 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
         try {
             Picasso.with(holder.itemView.getContext()).load(imagePath).placeholder(R.mipmap.ic_image_placeholder)
                     .error(R.mipmap.ic_image_placeholder).into(holder.posterView);
-            holder.popularityTextView.setText("Popularity: " + String.format(Locale.US,"%.1f",Float.parseFloat(oneMovie.getPopularity())));
-            holder.ratingTextView.setText("Rating: "+ String.format(Locale.US, "%.1f",Float.parseFloat(oneMovie.getVoteAverage())));
+            holder.popularityTextView.setText(String.format(Locale.US,"%.1f",Float.parseFloat(oneMovie.getPopularity())));
+            holder.ratingTextView.setText(String.format(Locale.US, "%.1f",Float.parseFloat(oneMovie.getVoteAverage())));
         }
         catch (Exception e) {
             e.printStackTrace();

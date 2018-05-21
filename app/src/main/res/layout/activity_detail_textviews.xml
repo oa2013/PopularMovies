@@ -13,6 +13,7 @@
         android:layout_height="@dimen/poster_width"
         android:contentDescription="@string/placeholder"
         android:src="@color/cardview_dark_background"
+        android:padding="@dimen/detail_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.157"
@@ -112,13 +113,14 @@
     <Button
         android:id="@+id/review_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/button_height"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:padding="@dimen/button_padding"
         android:text="@string/review_button"
         android:textColor="@color/white"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vote_average_text" />
 

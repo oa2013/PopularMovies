@@ -49,7 +49,7 @@ public class ReviewActivity extends AppCompatActivity implements LoaderManager.L
         mMovieID = intent.getStringExtra("MovieID");
         mErrorTextView.setVisibility(View.INVISIBLE);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(ReviewActivity.this, numberOfColumns(), GridLayoutManager.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(ReviewActivity.this, 1, GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
 
         if (getSupportLoaderManager().getLoader(1) != null) {
@@ -60,16 +60,6 @@ public class ReviewActivity extends AppCompatActivity implements LoaderManager.L
 
         adapter = new MovieReviewAdapter(this);
         mRecyclerView.setAdapter(adapter);
-    }
-
-    private int numberOfColumns() {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int widthDivider = 400;
-        int width = displayMetrics.widthPixels;
-        int nColumns = width / widthDivider;
-        if (nColumns < 2) return 2;
-        return nColumns;
     }
 
     @Override
@@ -107,5 +97,11 @@ public class ReviewActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public void onLoaderReset(Loader<String> loader) {}
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getReviews();
+    }
 
 }
