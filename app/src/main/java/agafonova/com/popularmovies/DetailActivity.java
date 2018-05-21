@@ -5,6 +5,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import agafonova.com.popularmovies.adapters.TrailerAdapter;
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.model.ReviewResult;
 import agafonova.com.popularmovies.model.TrailerResult;
@@ -26,10 +31,10 @@ import butterknife.ButterKnife;
 
 /*
  * @author Olga Agafonova
- * @date May 18, 2018
+ * @date May 21, 2018
  * Android Nanodegree Movie Poster Project
  * */
-public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
+public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, TrailerAdapter.ResourceClickListener {
 
     private static final String IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
     private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
@@ -59,9 +64,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @BindView(R.id.review_button)
     Button mReviewButton;
 
+    @BindView(R.id.rv_trailers)
+    RecyclerView mRecyclerView;
+
+    private TrailerAdapter adapter;
     private String mApiKey;
     private String mMovieID;
-
     private ArrayList<TrailerResult> trailerResults = null;
     private Result result;
 
@@ -94,6 +102,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             /**
              * Phase 2 code starts here
              */
+            GridLayoutManager layoutManager = new GridLayoutManager(DetailActivity.this, 1, GridLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(layoutManager);
+            mRecyclerView.setHasFixedSize(true);
+
             if (getSupportLoaderManager().getLoader(1) != null) {
                 getSupportLoaderManager().initLoader(1, null, this);
             }
@@ -116,6 +128,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             }
 
             getMovieTrailers();
+
+            adapter = new TrailerAdapter(this);
+            mRecyclerView.setAdapter(adapter);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,12 +165,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         progressBar.setVisibility(View.GONE);
 
         try {
-
             trailerResults = JsonUtils.parseTrailers(data);
 
             if(trailerResults != null) {
-                //There can be multiple trailers! Need a recycler view here
-                // String path = YOUTUBE_URL + trailerResults.get(0).getKey();
+               adapter.setData(trailerResults);
+               adapter.notifyDataSetChanged();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,5 +180,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader<String> loader) {}
 
+    @Override
+    public void onTrailerClick(String trailerID) {
 
+        if(trailerResults != null) {
+
+            for(int i=0; i<trailerResults.size(); i++) {
+                if (trailerResults.get(i).getId().equals(trailerID)) {
+                    Log.d("Trailer", trailerID);
+                }
+            }
+        }
+    }
 }

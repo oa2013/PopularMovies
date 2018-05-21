@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -51,6 +50,8 @@ public class ReviewActivity extends AppCompatActivity implements LoaderManager.L
 
         GridLayoutManager layoutManager = new GridLayoutManager(ReviewActivity.this, 1, GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setNestedScrollingEnabled(true);
 
         if (getSupportLoaderManager().getLoader(1) != null) {
             getSupportLoaderManager().initLoader(1, null, this);
