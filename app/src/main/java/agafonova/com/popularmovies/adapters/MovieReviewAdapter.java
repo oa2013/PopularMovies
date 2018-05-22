@@ -76,6 +76,7 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
             super(itemView);
             authorTextView = itemView.findViewById(R.id.review_author_text);
             contentTextView = itemView.findViewById(R.id.review_content);
+            contentTextView.setOnClickListener(this);
         }
 
         @Override

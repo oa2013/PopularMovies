@@ -1,6 +1,7 @@
 package agafonova.com.popularmovies;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -63,6 +64,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @BindView(R.id.review_button)
     ImageView mReviewButton;
+
+    @BindView(R.id.favoriteButton)
+    ImageView mFavoriteButton;
 
     @BindView(R.id.rv_trailers)
     RecyclerView mRecyclerView;
@@ -145,6 +149,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 startActivity(intent);
             }
         });
+
+        mFavoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               //call to internal db here
+            }
+        });
     }
 
     public void getMovieTrailers() {
@@ -184,10 +195,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     public void onTrailerClick(String trailerID) {
 
         if(trailerResults != null) {
-
             for(int i=0; i<trailerResults.size(); i++) {
                 if (trailerResults.get(i).getId().equals(trailerID)) {
-                    Log.d("Trailer", trailerID);
+
+                    String address = YOUTUBE_URL + trailerResults.get(i).getKey();
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(address)));
                 }
             }
         }

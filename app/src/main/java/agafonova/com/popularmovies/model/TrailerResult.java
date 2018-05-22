@@ -86,7 +86,7 @@ public class TrailerResult implements Parcelable {
     }
 
     public void setKey(String key) {
-        this.key = name;
+        this.key = key;
     }
 
     public String getName() {

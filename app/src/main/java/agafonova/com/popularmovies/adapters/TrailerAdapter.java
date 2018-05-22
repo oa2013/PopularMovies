@@ -74,6 +74,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
             super(itemView);
             textViewTrailer = itemView.findViewById(R.id.textViewTrailer);
             imageViewTrailer = itemView.findViewById(R.id.imageViewTrailer);
+            textViewTrailer.setOnClickListener(this);
         }
 
         @Override
