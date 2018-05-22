@@ -32,7 +32,7 @@ import butterknife.ButterKnife;
 
 /*
  * @author Olga Agafonova
- * @date May 21, 2018
+ * @date May 22, 2018
  * Android Nanodegree Movie Poster Project
  * */
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, TrailerAdapter.ResourceClickListener {
@@ -197,7 +197,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         if(trailerResults != null) {
             for(int i=0; i<trailerResults.size(); i++) {
                 if (trailerResults.get(i).getId().equals(trailerID)) {
-
                     String address = YOUTUBE_URL + trailerResults.get(i).getKey();
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(address)));
                 }

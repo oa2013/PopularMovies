@@ -10,35 +10,38 @@
         android:id="@+id/poster_detail"
         android:layout_width="@dimen/poster_width"
         android:layout_height="@dimen/poster_width"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:contentDescription="@string/placeholder"
         android:padding="@dimen/detail_padding"
         android:src="@color/cardview_dark_background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.157"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.254" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/title_text"
-        style="@style/Base.TextAppearance.AppCompat.Display1"
+        style="@style/Base.TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/placeholder"
         android:textColor="@color/colorAccent"
         app:layout_constraintBottom_toTopOf="@+id/poster_detail"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/release_date_text"
         style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/placeholder"
         android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,8 +52,7 @@
         style="@style/Base.TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/placeholder"
         android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -118,14 +120,8 @@
         android:id="@+id/review_star"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/vote_average_text"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.244"
+        app:layout_constraintTop_toTopOf="@+id/vote_average_text"
         app:srcCompat="@drawable/ic_star_black_24dp" />
 
     <ImageView
@@ -141,7 +137,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_trailers"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="185dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
