@@ -128,19 +128,15 @@
         app:layout_constraintVertical_bias="0.244"
         app:srcCompat="@drawable/ic_star_black_24dp" />
 
-    <Button
+    <ImageView
         android:id="@+id/review_button"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/button_height"
-        android:layout_marginTop="16dp"
+        android:layout_width="51dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/colorPrimaryDark"
-        android:padding="@dimen/button_padding"
-        android:text="@string/review_button"
-        android:textColor="@color/white"
-        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vote_average_text" />
+        app:layout_constraintTop_toBottomOf="@+id/vote_average_text"
+        app:srcCompat="@drawable/ic_feedback_black_24dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_trailers"
@@ -155,5 +151,14 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/plot_synopsis_sv" />
+
+    <ImageView
+        android:id="@+id/favoriteButton"
+        android:layout_width="54dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/review_button"
+        app:layout_constraintTop_toBottomOf="@+id/vote_average_text"
+        app:srcCompat="@drawable/ic_favorite" />
 
 </android.support.constraint.ConstraintLayout>

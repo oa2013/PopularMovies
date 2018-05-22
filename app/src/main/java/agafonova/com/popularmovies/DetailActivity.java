@@ -62,7 +62,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     TextView mErrorTextView;
 
     @BindView(R.id.review_button)
-    Button mReviewButton;
+    ImageView mReviewButton;
 
     @BindView(R.id.rv_trailers)
     RecyclerView mRecyclerView;
