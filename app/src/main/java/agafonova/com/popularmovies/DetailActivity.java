@@ -1,6 +1,7 @@
 package agafonova.com.popularmovies;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -14,6 +15,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import agafonova.com.popularmovies.adapters.TrailerAdapter;
+import agafonova.com.popularmovies.db.FavoritesDBHelper;
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.model.ReviewResult;
 import agafonova.com.popularmovies.model.TrailerResult;
@@ -32,7 +36,7 @@ import butterknife.ButterKnife;
 
 /*
  * @author Olga Agafonova
- * @date May 22, 2018
+ * @date May 30, 2018
  * Android Nanodegree Movie Poster Project
  * */
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, TrailerAdapter.ResourceClickListener {
@@ -68,6 +72,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @BindView(R.id.favoriteButton)
     ImageView mFavoriteButton;
 
+    @BindView(R.id.favoriteEmptyButton)
+    ImageView mFavoriteEmptyButton;
+
     @BindView(R.id.rv_trailers)
     RecyclerView mRecyclerView;
 
@@ -76,6 +83,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private String mMovieID;
     private ArrayList<TrailerResult> trailerResults = null;
     private Result result;
+    private FavoritesDBHelper moviesDB;
+    private int mItemPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +92,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
-        Intent intent = getIntent();
-
         try {
+            Intent intent = getIntent();
             result = intent.getParcelableExtra("Movies");
-
             mTitleView.setText(result.getTitle());
 
             SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
@@ -136,26 +143,46 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             adapter = new TrailerAdapter(this);
             mRecyclerView.setAdapter(adapter);
 
+            moviesDB = new FavoritesDBHelper(this);
+            moviesDB.getWritableDatabase();
+
+            mReviewButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getBaseContext(), ReviewActivity.class);
+                    intent.putExtra("MovieID", result.getId());
+                    intent.putExtra("ApiKey", mApiKey);
+                    startActivity(intent);
+                }
+            });
+
+            mFavoriteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = getIntent();
+                    Result currentResult = intent.getParcelableExtra("Movies");
+                    String movieName = currentResult.getTitle();
+                    moviesDB.insert(movieName);
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Added to favorites", Toast.LENGTH_SHORT);
+
+                }
+            });
+
+            mFavoriteEmptyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = getIntent();
+                    mItemPosition = intent.getParcelableExtra("mPosition");
+                    moviesDB.delete(mItemPosition);
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT);
+                }
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        mReviewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), ReviewActivity.class);
-                intent.putExtra("MovieID", result.getId());
-                intent.putExtra("ApiKey", mApiKey);
-                startActivity(intent);
-            }
-        });
-
-        mFavoriteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               //call to internal db here
-            }
-        });
     }
 
     public void getMovieTrailers() {

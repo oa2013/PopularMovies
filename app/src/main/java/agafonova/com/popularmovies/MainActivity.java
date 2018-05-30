@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.ArrayList;
 import agafonova.com.popularmovies.adapters.ResultAdapter;
+import agafonova.com.popularmovies.db.FavoritesDBHelper;
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.util.DataLoader;
 import agafonova.com.popularmovies.util.DataLoader2;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int loader2 = 2;
 
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
+    private FavoritesDBHelper moviesDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +102,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             sortByRating = false;
             sortByPopularity = false;
-            adapter = new ResultAdapter(this);
+
+            moviesDB = new FavoritesDBHelper(this);
+            adapter = new ResultAdapter(this, moviesDB);
+
             mRecyclerView.setAdapter(adapter);
 
             checkNetworkAndGetData();
@@ -113,7 +118,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             popularityResults = savedInstanceState.getParcelableArrayList("moviesPopular");
             topRatedResults = savedInstanceState.getParcelableArrayList("moviesTopRated");
 
-            adapter = new ResultAdapter(this);
+            moviesDB = new FavoritesDBHelper(this);
+            adapter = new ResultAdapter(this, moviesDB);
+
             mRecyclerView.setAdapter(adapter);
 
             if (sortByPopularity == true) {
@@ -257,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if(movieResult.getId().equals(movieID)) {
 
                 intent.putExtra("Movies", movieResult);
+                intent.putExtra("mPosition", adapter.getItemSQLPosition());
                 startActivity(intent);
             }
         }
@@ -266,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if(movieResult.getId().equals(movieID)) {
 
                 intent.putExtra("Movies", movieResult);
+                intent.putExtra("mPosition", adapter.getItemSQLPosition());
                 startActivity(intent);
             }
         }

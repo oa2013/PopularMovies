@@ -11,6 +11,8 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Locale;
 import agafonova.com.popularmovies.R;
+import agafonova.com.popularmovies.db.FavoriteItem;
+import agafonova.com.popularmovies.db.FavoritesDBHelper;
 import agafonova.com.popularmovies.model.Result;
 
 public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdapterViewHolder>  {
@@ -19,9 +21,12 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
     private ImageView posterView;
     private List<Result> mMovieList;
     final private ResultAdapter.ResourceClickListener mOnClickListener;
+    FavoritesDBHelper moviesDB;
+    int mItemPosition;
 
-    public ResultAdapter(ResultAdapter.ResourceClickListener listener) {
+    public ResultAdapter(ResultAdapter.ResourceClickListener listener, FavoritesDBHelper db) {
         mOnClickListener = listener;
+        moviesDB = db;
     }
 
     public interface ResourceClickListener {
@@ -42,6 +47,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
 
         Result oneMovie = mMovieList.get(position);
         String imagePath = IMAGE_URL + oneMovie.getPosterPath();
+        mItemPosition = position;
 
         try {
             Picasso.with(holder.itemView.getContext()).load(imagePath).placeholder(R.mipmap.ic_image_placeholder)
@@ -52,6 +58,10 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public int getItemSQLPosition () {
+        return mItemPosition;
     }
 
     @Override
