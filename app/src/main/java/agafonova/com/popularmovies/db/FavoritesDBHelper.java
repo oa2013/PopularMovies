@@ -25,7 +25,7 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
     private static final String MASTER_TABLE = "master";
     private static final String DATABASE_NAME = "favorites";
 
-    public static final String KEY_ID = "_id";
+    public static final String KEY_ID = "id";
     public static final String KEY_FAVORITE = "favorite";
     private static final String[] COLUMNS = { KEY_ID, KEY_FAVORITE };
 
@@ -95,6 +95,7 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
 
     public long count() {
         if (mReadableDB == null) {mReadableDB = getReadableDatabase();}
+        Log.d(TAG, "count() called");
         return DatabaseUtils.queryNumEntries(mReadableDB, MASTER_TABLE);
     }
 
@@ -111,20 +112,27 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
     }
 
     //Select one item
-    public FavoriteItem query(int position) {
-        String query = "SELECT  * FROM " + MASTER_TABLE +
-                " ORDER BY " + KEY_FAVORITE + " ASC " +
-                "LIMIT " + position + ",1";
+    public FavoriteItem query(String name) {
 
+        String query = "SELECT  * FROM " + MASTER_TABLE + " WHERE favorite='" + name + "';";
         Cursor cursor = null;
         FavoriteItem entry = new FavoriteItem();
 
         try {
             if (mReadableDB == null) {mReadableDB = getReadableDatabase();}
             cursor = mReadableDB.rawQuery(query, null);
-            cursor.moveToFirst();
-            entry.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
-            entry.setFavorite(cursor.getString(cursor.getColumnIndex(KEY_FAVORITE)));
+            Log.d(TAG, "Cursor count:  " + cursor.getCount());
+
+            if(cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                entry.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                entry.setFavorite(cursor.getString(cursor.getColumnIndex(KEY_FAVORITE)));
+                Log.d(TAG, "query() called");
+            }
+            else {
+                Log.d(TAG, "cursor returned no entries");
+            }
+
         } catch (Exception e) {
             Log.d(TAG, "QUERY EXCEPTION! " + e.getMessage());
         } finally {
@@ -139,12 +147,15 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
         long newId = 0;
         ContentValues values = new ContentValues();
         values.put(KEY_FAVORITE, item);
+
         try {
             if (mWritableDB == null) {mWritableDB = getWritableDatabase();}
             newId = mWritableDB.insert(MASTER_TABLE, null, values);
+            Log.d(TAG, "insert() called");
         } catch (Exception e) {
             Log.d(TAG, "INSERT EXCEPTION! " + e.getMessage());
         }
+
         return newId;
     }
 
@@ -154,6 +165,7 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
     //WHERE KEY_ID = BLAH
     public int update(int id, String word) {
         int mNumberOfRowsUpdated = -1;
+
         try {
             if (mWritableDB == null) {mWritableDB = getWritableDatabase();}
             ContentValues values = new ContentValues();
@@ -164,20 +176,26 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
                     KEY_ID + " = ?",
                     new String[]{String.valueOf(id)});
 
+            Log.d(TAG, "update() called");
         } catch (Exception e) {
             Log.d (TAG, "UPDATE EXCEPTION! " + e.getMessage());
         }
+
         return mNumberOfRowsUpdated;
     }
 
     public int delete(int id) {
         int deleted = 0;
+
         try {
             if (mWritableDB == null) {mWritableDB = getWritableDatabase();}
             deleted = mWritableDB.delete(MASTER_TABLE,
                     KEY_ID + " = ? ", new String[]{String.valueOf(id)});
+            Log.d(TAG, "delete() called");
         } catch (Exception e) {
-            Log.d (TAG, "DELETE EXCEPTION! " + e.getMessage()); }
+            Log.d (TAG, "DELETE EXCEPTION! " + e.getMessage());
+        }
+
         return deleted;
     }
 }

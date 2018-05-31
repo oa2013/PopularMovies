@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import agafonova.com.popularmovies.adapters.TrailerAdapter;
+import agafonova.com.popularmovies.db.FavoriteItem;
 import agafonova.com.popularmovies.db.FavoritesDBHelper;
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.model.ReviewResult;
@@ -162,9 +163,21 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     Intent intent = getIntent();
                     Result currentResult = intent.getParcelableExtra("Movies");
                     String movieName = currentResult.getTitle();
-                    moviesDB.insert(movieName);
 
-                    Toast toast = Toast.makeText(getApplicationContext(), "Added to favorites", Toast.LENGTH_SHORT);
+                    FavoriteItem existingItem = moviesDB.query(movieName);
+                    //If this movie is already in the favorites table,
+                    //then we update its name
+                    if(existingItem.getFavorite() != null)
+                    {
+                        moviesDB.update(mItemPosition,movieName);
+                    }
+                    //else, we add it to the table
+                    else
+                    {
+                        moviesDB.insert(movieName);
+                    }
+
+                    Toast.makeText(getApplicationContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
 
                 }
             });
@@ -173,10 +186,22 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 @Override
                 public void onClick(View v) {
                     Intent intent = getIntent();
-                    mItemPosition = intent.getParcelableExtra("mPosition");
-                    moviesDB.delete(mItemPosition);
+                    Result currentResult = intent.getParcelableExtra("Movies");
+                    String movieName = currentResult.getTitle();
 
-                    Toast toast = Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT);
+                    FavoriteItem existingItem = moviesDB.query(movieName);
+                    //If this movie is already in the favorites table,
+                    //then we delete it
+                    if(existingItem.getFavorite() != null)
+                    {
+                            moviesDB.delete(mItemPosition);
+                            Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show();
+                    }
+                    //else, we display an error message
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(), "Movie not in favorites", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 

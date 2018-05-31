@@ -22,7 +22,6 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
     private List<Result> mMovieList;
     final private ResultAdapter.ResourceClickListener mOnClickListener;
     FavoritesDBHelper moviesDB;
-    int mItemPosition;
 
     public ResultAdapter(ResultAdapter.ResourceClickListener listener, FavoritesDBHelper db) {
         mOnClickListener = listener;
@@ -47,7 +46,6 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
 
         Result oneMovie = mMovieList.get(position);
         String imagePath = IMAGE_URL + oneMovie.getPosterPath();
-        mItemPosition = position;
 
         try {
             Picasso.with(holder.itemView.getContext()).load(imagePath).placeholder(R.mipmap.ic_image_placeholder)
@@ -58,10 +56,6 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
         catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public int getItemSQLPosition () {
-        return mItemPosition;
     }
 
     @Override

@@ -264,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if(movieResult.getId().equals(movieID)) {
 
                 intent.putExtra("Movies", movieResult);
-                intent.putExtra("mPosition", adapter.getItemSQLPosition());
                 startActivity(intent);
             }
         }
@@ -274,7 +273,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if(movieResult.getId().equals(movieID)) {
 
                 intent.putExtra("Movies", movieResult);
-                intent.putExtra("mPosition", adapter.getItemSQLPosition());
                 startActivity(intent);
             }
         }
