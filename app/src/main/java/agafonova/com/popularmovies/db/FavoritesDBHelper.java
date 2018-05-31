@@ -8,6 +8,8 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * @author Olga Agafonova
@@ -140,6 +142,46 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
             return entry;
         }
     }
+
+    public List<FavoriteItem> getAllFavorites() {
+        String query = "SELECT  * FROM " + MASTER_TABLE + ";";
+        Cursor cursor = null;
+        ArrayList<FavoriteItem> favoriteItemList = new ArrayList<FavoriteItem>();
+
+        try {
+            FavoriteItem entry = new FavoriteItem();
+            if (mReadableDB == null) {mReadableDB = getReadableDatabase();}
+            cursor = mReadableDB.rawQuery(query, null);
+            Log.d(TAG, "Cursor count:  " + cursor.getCount());
+
+            if(cursor.getCount() > 0) {
+
+                cursor.moveToFirst();
+                entry.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                entry.setFavorite(cursor.getString(cursor.getColumnIndex(KEY_FAVORITE)));
+                favoriteItemList.add((entry));
+
+                while(cursor.moveToNext()) {
+                    entry.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                    entry.setFavorite(cursor.getString(cursor.getColumnIndex(KEY_FAVORITE)));
+                    favoriteItemList.add((entry));
+                }
+
+                Log.d(TAG, "getAllFavorites() called");
+            }
+            else {
+                Log.d(TAG, "cursor in getAllFavorites() returned no entries");
+            }
+
+        } catch (Exception e) {
+            Log.d(TAG, "getAllFavorites() EXCEPTION! " + e.getMessage());
+        } finally {
+            cursor.close();
+            return favoriteItemList;
+        }
+    }
+
+
     //SQL
     //INSERT INTO MASTER_TABLE(KEY_ID, KEY_FAVORTIE)
     //VALUES(BLAH, BLAH)

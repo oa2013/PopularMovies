@@ -29,7 +29,7 @@ import butterknife.ButterKnife;
 
 /*
 * @author Olga Agafonova
-* @date May 2, 2018
+* @date May 31, 2018
 * Android Nanodegree Movie Poster Project
 * */
 
