@@ -13,7 +13,7 @@ import java.util.List;
 
 /*
  * @author Olga Agafonova
- * @date May 30, 2018
+ * @date June 1, 2018
  * Android Nanodegree Movie Poster Project
  *
  * Based on Google's code here:
@@ -132,7 +132,7 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
                 Log.d(TAG, "query() called");
             }
             else {
-                Log.d(TAG, "cursor returned no entries");
+                Log.d(TAG, "cursor returned no entries in query()");
             }
 
         } catch (Exception e) {
@@ -217,7 +217,6 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
                     values,
                     KEY_ID + " = ?",
                     new String[]{String.valueOf(id)});
-
             Log.d(TAG, "update() called");
         } catch (Exception e) {
             Log.d (TAG, "UPDATE EXCEPTION! " + e.getMessage());
@@ -226,18 +225,18 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
         return mNumberOfRowsUpdated;
     }
 
-    public int delete(int id) {
-        int deleted = 0;
+    public void delete(String name) {
+        String query = "DELETE  FROM " + MASTER_TABLE + " WHERE favorite='" + name + "';";
+        Cursor cursor = null;
 
         try {
-            if (mWritableDB == null) {mWritableDB = getWritableDatabase();}
-            deleted = mWritableDB.delete(MASTER_TABLE,
-                    KEY_ID + " = ? ", new String[]{String.valueOf(id)});
+            if (mReadableDB == null) {mReadableDB = getReadableDatabase();}
+            cursor = mReadableDB.rawQuery(query, null);
             Log.d(TAG, "delete() called");
         } catch (Exception e) {
-            Log.d (TAG, "DELETE EXCEPTION! " + e.getMessage());
+            Log.d(TAG, "DELETE EXCEPTION! " + e.getMessage());
+        } finally {
+            cursor.close();
         }
-
-        return deleted;
     }
 }

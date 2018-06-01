@@ -165,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     sortByRating = false;
 
                     if (popularityResults != null) {
-                        //Collections.sort(popularityResults, new Result.PopularityComparator());
                         adapter.setData(popularityResults);
                         adapter.notifyDataSetChanged();
                     }
@@ -179,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     sortByPopularity = false;
 
                     if (topRatedResults != null) {
-                        //Collections.sort(topRatedResults, new Result.RatingComparator());
                         adapter.setData(topRatedResults);
                         adapter.notifyDataSetChanged();
                     }

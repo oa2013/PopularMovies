@@ -37,7 +37,7 @@ import butterknife.ButterKnife;
 
 /*
  * @author Olga Agafonova
- * @date May 30, 2018
+ * @date June 1, 2018
  * Android Nanodegree Movie Poster Project
  * */
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, TrailerAdapter.ResourceClickListener {
@@ -194,7 +194,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     //then we delete it
                     if(existingItem.getFavorite() != null)
                     {
-                            moviesDB.delete(mItemPosition);
+                            moviesDB.delete(movieName);
                             Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show();
                     }
                     //else, we display an error message

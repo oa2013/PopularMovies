@@ -2,20 +2,27 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:background="@color/colorPrimary"
-        card_view:cardCornerRadius="2dp">
+        card_view:cardCornerRadius="2dp"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintEnd_toEndOf="parent"
+        card_view:layout_constraintHorizontal_bias="0.0"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent"
+        card_view:layout_constraintVertical_bias="1.0">
 
-        <RelativeLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="300dp">
 
             <ImageView
                 android:id="@+id/movie_poster"
@@ -23,32 +30,47 @@
                 android:layout_height="@dimen/poster_height"
                 android:background="@color/colorPrimary"
                 android:contentDescription="@string/placeholder"
-                android:paddingBottom="10dp"
                 android:paddingTop="10dp"
-                />
+                android:paddingBottom="10dp"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintHorizontal_bias="0.0"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/movie_popularity"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/movie_metric_height"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
                 android:layout_below="@+id/movie_poster"
                 android:layout_alignParentStart="true"
+                android:layout_marginBottom="44dp"
                 android:background="@color/colorPrimary"
                 android:gravity="center"
                 android:text="@string/placeholder"
                 android:textColor="@color/colorAccent"
-                android:textSize="@dimen/movie_metric_text_size" />
+                android:textSize="@dimen/movie_metric_text_size"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintHorizontal_bias="0.501"
+                card_view:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/movie_rating"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/movie_metric_height"
-                android:layout_below="@+id/movie_popularity"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/popularity_img"
                 android:background="@color/colorPrimary"
+                android:gravity="center"
+                android:text="@string/placeholder"
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/movie_metric_text_size"
-                android:text="@string/placeholder"
-                android:gravity="center"/>
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintHorizontal_bias="0.501"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toBottomOf="@+id/movie_poster" />
 
             <ImageView
                 android:id="@+id/popularity_img"
@@ -57,22 +79,34 @@
                 android:layout_alignTop="@+id/movie_popularity"
                 android:layout_alignBottom="@+id/movie_popularity"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="118dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginEnd="16dp"
+                card_view:layout_constraintBottom_toBottomOf="@+id/movie_popularity"
+                card_view:layout_constraintEnd_toStartOf="@+id/movie_popularity"
                 card_view:srcCompat="@drawable/ic_thumb_up_black_24dp" />
 
             <ImageView
                 android:id="@+id/rating_img"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/movie_rating"
-                android:layout_alignBottom="@+id/movie_rating"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="118dp"
-                android:layout_marginTop="0dp"
+                android:layout_height="28dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@+id/movie_rating"
+                card_view:layout_constraintEnd_toStartOf="@+id/movie_rating"
+                card_view:layout_constraintTop_toTopOf="@+id/movie_rating"
                 card_view:srcCompat="@drawable/ic_star_black_24dp" />
 
-        </RelativeLayout>
+            <ImageView
+                android:id="@+id/favorite_img"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="16dp"
+                card_view:layout_constraintStart_toEndOf="@+id/movie_rating"
+                card_view:layout_constraintTop_toTopOf="@+id/movie_rating"
+                card_view:srcCompat="@drawable/ic_favorite_blue" />
+
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
 

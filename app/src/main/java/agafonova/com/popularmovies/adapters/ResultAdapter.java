@@ -1,6 +1,7 @@
 package agafonova.com.popularmovies.adapters;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,18 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
                     .error(R.mipmap.ic_image_placeholder).into(holder.posterView);
             holder.popularityTextView.setText(String.format(Locale.US,"%.1f",Float.parseFloat(oneMovie.getPopularity())));
             holder.ratingTextView.setText(String.format(Locale.US, "%.1f",Float.parseFloat(oneMovie.getVoteAverage())));
+
+            //If this movie is in the favorites database, then we display a favorite icon
+            //Otherwise, we hide the icon
+            FavoriteItem existingItem = moviesDB.query(oneMovie.getTitle());
+            if(existingItem.getFavorite() != null)
+            {
+                holder.favoriteView.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                holder.favoriteView.setVisibility(View.INVISIBLE);
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -75,6 +88,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
             implements View.OnClickListener {
 
         private ImageView posterView;
+        private ImageView favoriteView;
         private TextView popularityTextView;
         private TextView ratingTextView;
 
@@ -83,6 +97,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
             posterView = itemView.findViewById(R.id.movie_poster);
             popularityTextView = itemView.findViewById(R.id.movie_popularity);
             ratingTextView = itemView.findViewById(R.id.movie_rating);
+            favoriteView = itemView.findViewById(R.id.favorite_img);
             posterView.setOnClickListener(this);
         }
 
