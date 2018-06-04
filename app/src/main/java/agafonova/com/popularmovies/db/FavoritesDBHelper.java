@@ -123,16 +123,15 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
         try {
             if (mReadableDB == null) {mReadableDB = getReadableDatabase();}
             cursor = mReadableDB.rawQuery(query, null);
-            Log.d(TAG, "Cursor count:  " + cursor.getCount());
 
             if(cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 entry.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
                 entry.setFavorite(cursor.getString(cursor.getColumnIndex(KEY_FAVORITE)));
-                Log.d(TAG, "query() called");
+                Log.d(TAG, "query() called for " + name);
             }
             else {
-                Log.d(TAG, "cursor returned no entries in query()");
+                Log.d(TAG, "cursor returned no entries in query() for " + name);
             }
 
         } catch (Exception e) {
@@ -225,18 +224,13 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
         return mNumberOfRowsUpdated;
     }
 
-    public void delete(String name) {
-        String query = "DELETE  FROM " + MASTER_TABLE + " WHERE favorite='" + name + "';";
-        Cursor cursor = null;
-
+    public void delete(String id) {
         try {
-            if (mReadableDB == null) {mReadableDB = getReadableDatabase();}
-            cursor = mReadableDB.rawQuery(query, null);
-            Log.d(TAG, "delete() called");
+            if (mWritableDB == null) {mWritableDB = getWritableDatabase();}
+            mWritableDB.delete(MASTER_TABLE, KEY_ID+"="+id, null);
+            Log.d(TAG, "delete() called for " + id);
         } catch (Exception e) {
             Log.d(TAG, "DELETE EXCEPTION! " + e.getMessage());
-        } finally {
-            cursor.close();
         }
     }
 }

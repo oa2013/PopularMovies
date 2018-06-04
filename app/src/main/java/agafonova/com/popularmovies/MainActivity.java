@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             getMoviesByPopularityAndTopRating();
 
+
             mPopularityButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

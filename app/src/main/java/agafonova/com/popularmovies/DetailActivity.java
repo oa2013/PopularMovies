@@ -194,7 +194,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     //then we delete it
                     if(existingItem.getFavorite() != null)
                     {
-                            moviesDB.delete(movieName);
+                            moviesDB.delete(String.valueOf(existingItem.getId()));
                             Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show();
                     }
                     //else, we display an error message
