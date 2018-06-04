@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 public class Result implements Parcelable{
 
@@ -22,13 +23,14 @@ public class Result implements Parcelable{
     private String adult;
     private String overview;
     private String releaseDate;
+    private int isFavorite = 0;
 
     public Result() {
 
     }
 
     public Result(String iVoteCount, String iId, String iVideo, String iVoteAverage, String iTitle, String iPopularity, String iPosterPath, String iOriginalLanguage,
-                  String iOriginalTitle, ArrayList<String> iGenreIds, String iBackdropPath, String iAdult, String iOverview, String iReleaseDate) {
+                  String iOriginalTitle, ArrayList<String> iGenreIds, String iBackdropPath, String iAdult, String iOverview, String iReleaseDate, int iIsFavorite) {
         this.voteCount = iVoteCount;
         this.id = iId;
         this.video = iVideo;
@@ -43,6 +45,7 @@ public class Result implements Parcelable{
         this.adult = iAdult;
         this.overview = iOverview;
         this.releaseDate = iReleaseDate;
+        this.isFavorite = iIsFavorite;
     }
 
     Result(Parcel in) {
@@ -63,6 +66,7 @@ public class Result implements Parcelable{
         this.adult = in.readString();
         this.overview = in.readString();
         this.releaseDate = in.readString();
+        this.isFavorite = in.readInt();
     }
 
     @Override
@@ -81,6 +85,7 @@ public class Result implements Parcelable{
         dest.writeString(adult);
         dest.writeString(overview);
         dest.writeString(releaseDate);
+        dest.writeInt(isFavorite);
     }
 
     public static class RatingComparator implements Comparator<Result> {
@@ -221,6 +226,10 @@ public class Result implements Parcelable{
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
+
+    public int getIsFavorite() {return isFavorite; }
+
+    public void setIsFavorite(int isFavorite) { this.isFavorite = isFavorite; }
 
     public static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>() {
         @Override

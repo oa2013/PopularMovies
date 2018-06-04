@@ -17,7 +17,17 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import agafonova.com.popularmovies.adapters.ResultAdapter;
+import agafonova.com.popularmovies.db.FavoriteItem;
 import agafonova.com.popularmovies.db.FavoritesDBHelper;
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.util.DataLoader;
@@ -50,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.sort_button_rating)
     Button mRatingButton;
 
+    @BindView(R.id.sort_button_favorites)
+    Button mFavoritesButton;
+
     @BindView(R.id.error_message)
     TextView mErrorTextView;
 
@@ -58,12 +71,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private boolean sortByPopularity;
     private boolean sortByRating;
+    private boolean sortByFavorites;
 
     private static final int loader1 = 1;
     private static final int loader2 = 2;
 
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
     private FavoritesDBHelper moviesDB;
+    private ArrayList<FavoriteItem> favoriteItemList = null;
+    private ArrayList<Result> allMovies = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mErrorTextView.setVisibility(View.INVISIBLE);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, numberOfColumns(), GridLayoutManager.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 1, GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
 
         if (getSupportLoaderManager().getLoader(1) != null) {
@@ -102,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             sortByRating = false;
             sortByPopularity = false;
+            sortByFavorites = false;
 
             moviesDB = new FavoritesDBHelper(this);
             adapter = new ResultAdapter(this, moviesDB);
@@ -114,9 +131,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             sortByPopularity = savedInstanceState.getBoolean("sortByPopularity");
             sortByRating = savedInstanceState.getBoolean("sortByRating");
+            sortByFavorites = savedInstanceState.getBoolean("sortByFavorites");
 
             popularityResults = savedInstanceState.getParcelableArrayList("moviesPopular");
             topRatedResults = savedInstanceState.getParcelableArrayList("moviesTopRated");
+            favoriteItemList = savedInstanceState.getParcelableArrayList("moviesFavorite");
 
             moviesDB = new FavoritesDBHelper(this);
             adapter = new ResultAdapter(this, moviesDB);
@@ -130,6 +149,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             if (sortByRating == true) {
                 adapter.setData(topRatedResults);
+                adapter.notifyDataSetChanged();
+            }
+
+            if(sortByFavorites == true) {
+                ArrayList<Result> sortedMovies = getFavoriteMovies();
+                adapter.setData(sortedMovies);
                 adapter.notifyDataSetChanged();
             }
 
@@ -156,14 +181,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if (networkInfo != null && networkInfo.isConnected()) {
 
-            getMoviesByPopularityAndTopRating();
-
+            getMoviesByAllCategories();
 
             mPopularityButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     sortByPopularity = true;
                     sortByRating = false;
+                    sortByFavorites = false;
 
                     if (popularityResults != null) {
                         adapter.setData(popularityResults);
@@ -177,11 +202,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 public void onClick(View v) {
                     sortByRating = true;
                     sortByPopularity = false;
+                    sortByFavorites = false;
 
                     if (topRatedResults != null) {
                         adapter.setData(topRatedResults);
                         adapter.notifyDataSetChanged();
                     }
+                }
+            });
+
+            mFavoritesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sortByFavorites = true;
+                    sortByRating = false;
+                    sortByPopularity = false;
+
+                    ArrayList<Result> sortedMovies = getFavoriteMovies();
+                    adapter.setData(sortedMovies);
+                    adapter.notifyDataSetChanged();
                 }
             });
         }
@@ -190,7 +229,60 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
-    public void getMoviesByPopularityAndTopRating() {
+    //Match movies in favoriteItemsList with movies in the adapter
+    public ArrayList<Result> getFavoriteMovies() {
+
+        favoriteItemList = moviesDB.getAllFavorites();
+        allMovies = new ArrayList<Result>();
+
+        allMovies.addAll(popularityResults);
+        allMovies.addAll(topRatedResults);
+
+        if(favoriteItemList != null) {
+
+            for(int i=0; i<allMovies.size(); i++) {
+
+                for(int k=0; k<favoriteItemList.size(); k++) {
+
+                    //if the titles match, we found the right movies in favoriteMovies
+                    if(allMovies.get(i).getTitle().contains(favoriteItemList.get(k).getFavorite())) {
+                        allMovies.get(i).setIsFavorite(1);
+                    }
+                }
+            }
+        }
+
+        Set<Result> noDuplicates = new LinkedHashSet<Result>(allMovies);
+        ArrayList<Result> noDuplicatesList = new ArrayList<Result>();
+        Iterator iterator = noDuplicates.iterator();
+
+        while(iterator.hasNext()) {
+            noDuplicatesList.add((Result)iterator.next());
+        }
+
+        Comparator<Result> myComparator = new Comparator<Result>() {
+            @Override
+            public int compare(Result a, Result b) {
+
+                if(b.getIsFavorite() > a.getIsFavorite()) {
+                    return 1;
+                }
+                else if (b.getIsFavorite() < a.getIsFavorite()) {
+                    return -1;
+                }
+                else  {
+                    return 0;
+                }
+            }
+        };
+
+        //Requires minSdkVersion 24
+        Collections.sort(noDuplicatesList, myComparator);
+
+        return noDuplicatesList;
+    }
+
+    public void getMoviesByAllCategories() {
 
         Bundle queryBundle = new Bundle();
         queryBundle.putString("apiKey", mApiKey);
@@ -287,8 +379,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("moviesPopular", popularityResults);
         outState.putParcelableArrayList("moviesTopRated", topRatedResults);
+        outState.putParcelableArrayList("moviesFavorite", favoriteItemList);
         outState.putBoolean("sortByPopularity",sortByPopularity);
         outState.putBoolean("sortByRating",sortByRating);
+        outState.putBoolean("sortByFavorites",sortByFavorites);
         super.onSaveInstanceState(outState);
     }
 
@@ -297,7 +391,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onRestoreInstanceState(savedInstanceState);
         popularityResults = savedInstanceState.getParcelableArrayList("moviesPopular");
         topRatedResults = savedInstanceState.getParcelableArrayList("moviesTopRated");
+        favoriteItemList = savedInstanceState.getParcelableArrayList("moviesFavorite");
         sortByPopularity = savedInstanceState.getBoolean("sortByPopularity");
         sortByRating = savedInstanceState.getBoolean("sortByRating");
+        sortByFavorites = savedInstanceState.getBoolean("sortByFavorites");
     }
 }

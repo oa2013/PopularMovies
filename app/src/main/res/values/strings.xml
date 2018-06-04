@@ -2,6 +2,7 @@
     <string name="app_name">Popular Movies</string>
     <string name="sort_popularity">Most Popular</string>
     <string name="sort_rating">Highest Rating</string>
+    <string name="sort_favorites">Favorites</string>
     <string name="error">Error: no Wi-Fi or carrier network connection available</string>
     <string name="placeholder">Dummy data</string>
     <string name="popularity">Popularity: </string>

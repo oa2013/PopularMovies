@@ -3,17 +3,14 @@ package agafonova.com.popularmovies.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import java.util.ArrayList;
-import java.util.List;
-
 /*
  * @author Olga Agafonova
- * @date June 1, 2018
+ * @date June 4, 2018
  * Android Nanodegree Movie Poster Project
  *
  * Based on Google's code here:
@@ -142,7 +139,7 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<FavoriteItem> getAllFavorites() {
+    public ArrayList<FavoriteItem> getAllFavorites() {
         String query = "SELECT  * FROM " + MASTER_TABLE + ";";
         Cursor cursor = null;
         ArrayList<FavoriteItem> favoriteItemList = new ArrayList<FavoriteItem>();
@@ -151,7 +148,6 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
             FavoriteItem entry = new FavoriteItem();
             if (mReadableDB == null) {mReadableDB = getReadableDatabase();}
             cursor = mReadableDB.rawQuery(query, null);
-            Log.d(TAG, "Cursor count:  " + cursor.getCount());
 
             if(cursor.getCount() > 0) {
 
