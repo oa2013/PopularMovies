@@ -5,8 +5,6 @@
     <string name="sort_favorites">Favorites</string>
     <string name="error">Error: no Wi-Fi or carrier network connection available</string>
     <string name="placeholder">Dummy data</string>
-    <string name="popularity">Popularity: </string>
     <string name="error_trailer">Error: unable to load videos</string>
     <string name="error_review">Error: unable to load reviews</string>
-    <string name="review_button">Read Reviews</string>
 </resources>

@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 public class Result implements Parcelable{
 

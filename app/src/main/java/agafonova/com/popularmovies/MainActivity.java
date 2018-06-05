@@ -17,15 +17,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
 import agafonova.com.popularmovies.adapters.ResultAdapter;
 import agafonova.com.popularmovies.db.FavoriteItem;
 import agafonova.com.popularmovies.db.FavoritesDBHelper;
@@ -142,17 +138,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             mRecyclerView.setAdapter(adapter);
 
-            if (sortByPopularity == true) {
+            if (sortByPopularity) {
                 adapter.setData(popularityResults);
                 adapter.notifyDataSetChanged();
             }
 
-            if (sortByRating == true) {
+            if (sortByRating) {
                 adapter.setData(topRatedResults);
                 adapter.notifyDataSetChanged();
             }
 
-            if(sortByFavorites == true) {
+            if(sortByFavorites) {
                 ArrayList<Result> sortedMovies = getFavoriteMovies();
                 adapter.setData(sortedMovies);
                 adapter.notifyDataSetChanged();
@@ -325,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 topRatedResults = JsonUtils.parseResults(data);
             }
 
-            if(sortByRating == true) {
+            if(sortByRating) {
                 adapter.setData(topRatedResults);
                 adapter.notifyDataSetChanged();
             }

@@ -178,7 +178,7 @@ public class FavoritesDBHelper extends SQLiteOpenHelper {
 
 
     //SQL
-    //INSERT INTO MASTER_TABLE(KEY_ID, KEY_FAVORTIE)
+    //INSERT INTO MASTER_TABLE(KEY_ID, KEY_FAVORITE)
     //VALUES(BLAH, BLAH)
     public long insert(String item) {
         long newId = 0;

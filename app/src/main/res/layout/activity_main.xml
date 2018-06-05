@@ -20,7 +20,7 @@
         android:background="@color/colorPrimaryDark"
         android:padding="@dimen/button_padding"
         android:text="@string/sort_rating"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -36,7 +36,7 @@
         android:padding="@dimen/button_padding"
         android:text="@string/sort_favorites"
         android:textColor="@color/white"
-        android:textSize="10sp"
+        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/sort_button_popularity"
         app:layout_constraintStart_toEndOf="@+id/sort_button_rating"
         app:layout_constraintTop_toTopOf="parent" />
@@ -50,7 +50,7 @@
         android:background="@color/colorPrimaryDark"
         android:padding="@dimen/button_padding"
         android:text="@string/sort_popularity"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
