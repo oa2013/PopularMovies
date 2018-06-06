@@ -1,15 +1,28 @@
 package agafonova.com.popularmovies.db;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
+@Entity(tableName = "master_table")
 public class FavoriteItem  implements Parcelable {
 
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     private int mId;
+
+    @ColumnInfo(name = "favorite")
     private String mFavorite;
 
     public FavoriteItem() {
 
+    }
+
+    public FavoriteItem(String iFavorite) {
+        mFavorite = iFavorite;
     }
 
     private FavoriteItem(Parcel in) {

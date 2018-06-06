@@ -1,7 +1,10 @@
 package agafonova.com.popularmovies;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import agafonova.com.popularmovies.adapters.TrailerAdapter;
 import agafonova.com.popularmovies.db.FavoriteItem;
@@ -29,6 +33,7 @@ import agafonova.com.popularmovies.model.TrailerResult;
 import agafonova.com.popularmovies.util.JsonUtils;
 import agafonova.com.popularmovies.util.ReviewLoader;
 import agafonova.com.popularmovies.util.TrailerLoader;
+import agafonova.com.popularmovies.viewmodel.FavoriteViewModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -70,9 +75,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @BindView(R.id.favoriteButton)
     ImageView mFavoriteButton;
 
-    @BindView(R.id.favoriteEmptyButton)
-    ImageView mFavoriteEmptyButton;
-
     @BindView(R.id.rv_trailers)
     RecyclerView mRecyclerView;
 
@@ -81,7 +83,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private String mMovieID;
     private ArrayList<TrailerResult> trailerResults = null;
     private Result result;
-    private FavoritesDBHelper moviesDB;
+    private FavoriteViewModel mFavoriteItemViewModel;
+    private ArrayList<FavoriteItem> favoriteItemList = null;
     private int mItemPosition;
 
     @Override
@@ -141,8 +144,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             adapter = new TrailerAdapter(this);
             mRecyclerView.setAdapter(adapter);
 
-            moviesDB = new FavoritesDBHelper(this);
-            moviesDB.getWritableDatabase();
+            mFavoriteItemViewModel = ViewModelProviders.of(this).get(FavoriteViewModel.class);
+
+            mFavoriteItemViewModel.getAllFavorites().observe(this, new Observer<List<FavoriteItem>>() {
+                @Override
+                public void onChanged(@Nullable final List<FavoriteItem> items) {
+
+                    favoriteItemList = new ArrayList<FavoriteItem>(items);
+                }
+            });
 
             mReviewButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -161,44 +171,24 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     Result currentResult = intent.getParcelableExtra("Movies");
                     String movieName = currentResult.getTitle();
 
-                    FavoriteItem existingItem = moviesDB.query(movieName);
+                    FavoriteItem existingItem = mFavoriteItemViewModel.selectFavorite(movieName).getValue().get(0);
                     //If this movie is already in the favorites table,
                     //then we update its name
                     if(existingItem.getFavorite() != null)
                     {
-                        moviesDB.update(mItemPosition,movieName);
+                        mFavoriteItemViewModel.deleteById(existingItem.getId());
+                        Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show();
                     }
                     //else, we add it to the table
                     else
                     {
-                        moviesDB.insert(movieName);
+                        FavoriteItem newItem = new FavoriteItem();
+                        newItem.setFavorite(movieName);
+                        mFavoriteItemViewModel.insert(newItem);
+                        Toast.makeText(getApplicationContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
                     }
 
-                    Toast.makeText(getApplicationContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
 
-                }
-            });
-
-            mFavoriteEmptyButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = getIntent();
-                    Result currentResult = intent.getParcelableExtra("Movies");
-                    String movieName = currentResult.getTitle();
-
-                    FavoriteItem existingItem = moviesDB.query(movieName);
-                    //If this movie is already in the favorites table,
-                    //then we delete it
-                    if(existingItem.getFavorite() != null)
-                    {
-                            moviesDB.delete(String.valueOf(existingItem.getId()));
-                            Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show();
-                    }
-                    //else, we display an error message
-                    else
-                    {
-                        Toast.makeText(getApplicationContext(), "Movie not in favorites", Toast.LENGTH_SHORT).show();
-                    }
                 }
             });
 

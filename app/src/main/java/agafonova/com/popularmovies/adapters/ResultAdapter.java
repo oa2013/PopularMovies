@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Locale;
 import agafonova.com.popularmovies.R;
 import agafonova.com.popularmovies.db.FavoriteItem;
-import agafonova.com.popularmovies.db.FavoritesDBHelper;
 import agafonova.com.popularmovies.model.Result;
+import agafonova.com.popularmovies.viewmodel.FavoriteViewModel;
 
 public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdapterViewHolder>  {
 
@@ -21,11 +21,11 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
     private ImageView posterView;
     private List<Result> mMovieList;
     final private ResultAdapter.ResourceClickListener mOnClickListener;
-    FavoritesDBHelper moviesDB;
+    FavoriteViewModel mViewModel;
 
-    public ResultAdapter(ResultAdapter.ResourceClickListener listener, FavoritesDBHelper db) {
+    public ResultAdapter(ResultAdapter.ResourceClickListener listener, FavoriteViewModel vm) {
         mOnClickListener = listener;
-        moviesDB = db;
+        mViewModel = vm;
     }
 
     public interface ResourceClickListener {
@@ -55,7 +55,8 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
 
             //If this movie is in the favorites database, then we display a favorite icon
             //Otherwise, we hide the icon
-            FavoriteItem existingItem = moviesDB.query(oneMovie.getTitle());
+            FavoriteItem existingItem = mViewModel.selectFavorite(oneMovie.getTitle()).getValue().get(0);
+
             if(existingItem.getFavorite() != null)
             {
                 holder.favoriteView.setVisibility(View.VISIBLE);

@@ -1,9 +1,12 @@
 package agafonova.com.popularmovies;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +24,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import agafonova.com.popularmovies.adapters.ResultAdapter;
 import agafonova.com.popularmovies.db.FavoriteItem;
@@ -30,12 +34,13 @@ import agafonova.com.popularmovies.util.DataLoader;
 import agafonova.com.popularmovies.util.DataLoader2;
 import agafonova.com.popularmovies.util.JsonUtils;
 import agafonova.com.popularmovies.util.NetworkUtils;
+import agafonova.com.popularmovies.viewmodel.FavoriteViewModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /*
 * @author Olga Agafonova
-* @date May 31, 2018
+* @date June 6, 2018
 * Android Nanodegree Movie Poster Project
 * */
 
@@ -73,9 +78,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int loader2 = 2;
 
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
-    private FavoritesDBHelper moviesDB;
     private ArrayList<FavoriteItem> favoriteItemList = null;
     private ArrayList<Result> allMovies = null;
+    private FavoriteViewModel mFavoriteItemViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mErrorTextView.setVisibility(View.INVISIBLE);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 1, GridLayoutManager.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, numberOfColumns(), GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
 
         if (getSupportLoaderManager().getLoader(1) != null) {
@@ -110,14 +115,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mApiKey = "";
         }
 
+        mFavoriteItemViewModel = ViewModelProviders.of(this).get(FavoriteViewModel.class);
+
+        mFavoriteItemViewModel.getAllFavorites().observe(this, new Observer<List<FavoriteItem>>() {
+            @Override
+            public void onChanged(@Nullable final List<FavoriteItem> items) {
+
+                favoriteItemList = new ArrayList<FavoriteItem>(items);
+            }
+        });
+
+
         if(savedInstanceState == null) {
 
             sortByRating = false;
             sortByPopularity = false;
             sortByFavorites = false;
-
-            moviesDB = new FavoritesDBHelper(this);
-            adapter = new ResultAdapter(this, moviesDB);
 
             mRecyclerView.setAdapter(adapter);
 
@@ -132,9 +145,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             popularityResults = savedInstanceState.getParcelableArrayList("moviesPopular");
             topRatedResults = savedInstanceState.getParcelableArrayList("moviesTopRated");
             favoriteItemList = savedInstanceState.getParcelableArrayList("moviesFavorite");
-
-            moviesDB = new FavoritesDBHelper(this);
-            adapter = new ResultAdapter(this, moviesDB);
 
             mRecyclerView.setAdapter(adapter);
 
@@ -228,9 +238,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     //Match movies in favoriteItemsList with movies in the adapter
     public ArrayList<Result> getFavoriteMovies() {
 
-        favoriteItemList = moviesDB.getAllFavorites();
         allMovies = new ArrayList<Result>();
-
         allMovies.addAll(popularityResults);
         allMovies.addAll(topRatedResults);
 
@@ -391,5 +399,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         sortByPopularity = savedInstanceState.getBoolean("sortByPopularity");
         sortByRating = savedInstanceState.getBoolean("sortByRating");
         sortByFavorites = savedInstanceState.getBoolean("sortByFavorites");
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

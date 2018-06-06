@@ -16,6 +16,7 @@ import java.util.ArrayList;
  * Based on Google's code here:
  * https://github.com/google-developer-training/android-fundamentals/
  * */
+
 public class FavoritesDBHelper extends SQLiteOpenHelper {
 
     private static final String TAG = FavoritesDBHelper.class.getSimpleName();
