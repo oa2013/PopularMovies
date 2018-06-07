@@ -1,5 +1,8 @@
 package agafonova.com.popularmovies;
 
+import android.app.Activity;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int loader2 = 2;
 
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
-    private ArrayList<FavoriteItem> favoriteItemList = null;
+    private ArrayList<FavoriteItem> favoriteItemArrayList = null;
     private ArrayList<Result> allMovies = null;
     private FavoriteViewModel mFavoriteItemViewModel;
 
@@ -102,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         /*
+
          * To Reviewers: you need to create an xml file in res/values
          * and use your own MovieDB API key
          * <resources>
@@ -117,22 +121,31 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mFavoriteItemViewModel = ViewModelProviders.of(this).get(FavoriteViewModel.class);
 
+        MutableLiveData<List<FavoriteItem>> mutableFavoriteItemList = new MutableLiveData<List<FavoriteItem>>();
+        favoriteItemArrayList = new ArrayList<FavoriteItem>();
+
+        adapter = new ResultAdapter(this, mutableFavoriteItemList);
+
         mFavoriteItemViewModel.getAllFavorites().observe(this, new Observer<List<FavoriteItem>>() {
             @Override
             public void onChanged(@Nullable final List<FavoriteItem> items) {
 
-                favoriteItemList = new ArrayList<FavoriteItem>(items);
+                adapter.mFavoritesList.setValue(items);
+
+                for(FavoriteItem item : items)
+                {
+                    favoriteItemArrayList.add(item);
+                }
+
+                mRecyclerView.setAdapter(adapter);
             }
         });
-
 
         if(savedInstanceState == null) {
 
             sortByRating = false;
             sortByPopularity = false;
             sortByFavorites = false;
-
-            mRecyclerView.setAdapter(adapter);
 
             checkNetworkAndGetData();
         }
@@ -144,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             popularityResults = savedInstanceState.getParcelableArrayList("moviesPopular");
             topRatedResults = savedInstanceState.getParcelableArrayList("moviesTopRated");
-            favoriteItemList = savedInstanceState.getParcelableArrayList("moviesFavorite");
+            favoriteItemArrayList = savedInstanceState.getParcelableArrayList("moviesFavorite");
 
             mRecyclerView.setAdapter(adapter);
 
@@ -242,14 +255,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         allMovies.addAll(popularityResults);
         allMovies.addAll(topRatedResults);
 
-        if(favoriteItemList != null) {
+        if(favoriteItemArrayList!= null) {
 
             for(int i=0; i<allMovies.size(); i++) {
 
-                for(int k=0; k<favoriteItemList.size(); k++) {
+                for(int k=0; k<favoriteItemArrayList.size(); k++) {
 
                     //if the titles match, we found the right movies in favoriteMovies
-                    if(allMovies.get(i).getTitle().contains(favoriteItemList.get(k).getFavorite())) {
+                    if(allMovies.get(i).getTitle().contains(favoriteItemArrayList.get(k).getFavorite())) {
                         allMovies.get(i).setIsFavorite(1);
                     }
                 }
@@ -383,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("moviesPopular", popularityResults);
         outState.putParcelableArrayList("moviesTopRated", topRatedResults);
-        outState.putParcelableArrayList("moviesFavorite", favoriteItemList);
+        outState.putParcelableArrayList("moviesFavorite", favoriteItemArrayList);
         outState.putBoolean("sortByPopularity",sortByPopularity);
         outState.putBoolean("sortByRating",sortByRating);
         outState.putBoolean("sortByFavorites",sortByFavorites);
@@ -395,13 +408,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onRestoreInstanceState(savedInstanceState);
         popularityResults = savedInstanceState.getParcelableArrayList("moviesPopular");
         topRatedResults = savedInstanceState.getParcelableArrayList("moviesTopRated");
-        favoriteItemList = savedInstanceState.getParcelableArrayList("moviesFavorite");
+        favoriteItemArrayList = savedInstanceState.getParcelableArrayList("moviesFavorite");
         sortByPopularity = savedInstanceState.getBoolean("sortByPopularity");
         sortByRating = savedInstanceState.getBoolean("sortByRating");
         sortByFavorites = savedInstanceState.getBoolean("sortByFavorites");
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 }

@@ -1,5 +1,6 @@
 package agafonova.com.popularmovies;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -31,6 +33,7 @@ import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.model.ReviewResult;
 import agafonova.com.popularmovies.model.TrailerResult;
 import agafonova.com.popularmovies.util.JsonUtils;
+import agafonova.com.popularmovies.util.NetworkUtils;
 import agafonova.com.popularmovies.util.ReviewLoader;
 import agafonova.com.popularmovies.util.TrailerLoader;
 import agafonova.com.popularmovies.viewmodel.FavoriteViewModel;
@@ -86,6 +89,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private FavoriteViewModel mFavoriteItemViewModel;
     private ArrayList<FavoriteItem> favoriteItemList = null;
     private int mItemPosition;
+    private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,23 +175,42 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     Result currentResult = intent.getParcelableExtra("Movies");
                     String movieName = currentResult.getTitle();
 
-                    FavoriteItem existingItem = mFavoriteItemViewModel.selectFavorite(movieName).getValue().get(0);
-                    //If this movie is already in the favorites table,
-                    //then we update its name
-                    if(existingItem.getFavorite() != null)
-                    {
+                    mFavoriteItemViewModel.getAllFavorites().observe(DetailActivity.this, new Observer<List<FavoriteItem>>() {
+                        @Override
+                        public void onChanged(@Nullable final List<FavoriteItem> favoritesList) {
+
+                            if(favoritesList != null) {
+                                //populate the static list with items from LiveData list
+                                for(FavoriteItem item : favoritesList) {
+                                    favoriteItemList.add(item);
+                                }
+                            }
+                        }
+                    });
+
+                    FavoriteItem existingItem = null;
+
+                    for(FavoriteItem item : favoriteItemList) {
+                        if(item.getFavorite().contains(movieName)) {
+                            existingItem = item;
+                        }
+                    }
+
+                    if(existingItem != null) {
+                        //If this movie is already in the favorites table when we click on the button,
+                        //then we delete it
                         mFavoriteItemViewModel.deleteById(existingItem.getId());
                         Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show();
+                        Log.d(LOG_TAG, "favorite id deleted: " + existingItem.getId());
                     }
                     //else, we add it to the table
-                    else
-                    {
+                    else {
                         FavoriteItem newItem = new FavoriteItem();
                         newItem.setFavorite(movieName);
                         mFavoriteItemViewModel.insert(newItem);
                         Toast.makeText(getApplicationContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
+                        Log.d(LOG_TAG, "favorite added: " + newItem.getFavorite());
                     }
-
 
                 }
             });

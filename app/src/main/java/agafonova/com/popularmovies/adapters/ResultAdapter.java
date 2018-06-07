@@ -1,5 +1,7 @@
 package agafonova.com.popularmovies.adapters;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,11 +23,11 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
     private ImageView posterView;
     private List<Result> mMovieList;
     final private ResultAdapter.ResourceClickListener mOnClickListener;
-    FavoriteViewModel mViewModel;
+    public MutableLiveData<List<FavoriteItem>> mFavoritesList;
 
-    public ResultAdapter(ResultAdapter.ResourceClickListener listener, FavoriteViewModel vm) {
-        mOnClickListener = listener;
-        mViewModel = vm;
+    public ResultAdapter(ResultAdapter.ResourceClickListener iListener, MutableLiveData<List<FavoriteItem>> iList) {
+        mOnClickListener = iListener;
+        mFavoritesList = iList;
     }
 
     public interface ResourceClickListener {
@@ -55,15 +57,25 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdap
 
             //If this movie is in the favorites database, then we display a favorite icon
             //Otherwise, we hide the icon
-            FavoriteItem existingItem = mViewModel.selectFavorite(oneMovie.getTitle()).getValue().get(0);
+            if(mFavoritesList != null)
+            {
+                FavoriteItem existingItem = null;
 
-            if(existingItem.getFavorite() != null)
-            {
-                holder.favoriteView.setVisibility(View.VISIBLE);
-            }
-            else
-            {
-                holder.favoriteView.setVisibility(View.INVISIBLE);
+                for(int i=0; i<mFavoritesList.getValue().size(); i++) {
+
+                    if(mFavoritesList.getValue().get(i).getFavorite().contains(oneMovie.getTitle())) {
+                        existingItem = mFavoritesList.getValue().get(i);
+                    }
+                }
+
+                if(existingItem != null)
+                {
+                    holder.favoriteView.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    holder.favoriteView.setVisibility(View.INVISIBLE);
+                }
             }
         }
         catch (Exception e) {

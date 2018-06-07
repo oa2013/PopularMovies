@@ -1,6 +1,7 @@
 package agafonova.com.popularmovies.db;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -16,11 +17,11 @@ public interface FavoriteDao {
     void deleteById(int mId);
 
     @Query("SELECT * FROM MASTER_TABLE")
-    LiveData<List<FavoriteItem>> selectAllFavorites();
+    LiveData<List<FavoriteItem>> getAllFavorites();
 
     @Query("DELETE FROM MASTER_TABLE")
     void deleteAllFavorites();
 
     @Query("SELECT * FROM MASTER_TABLE WHERE favorite=:mFavorite")
-    LiveData<List<FavoriteItem>> selectFavorite(String mFavorite);
+    List<FavoriteItem> selectFavorite(String mFavorite);
 }

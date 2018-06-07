@@ -6,15 +6,19 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import java.util.List;
 
-public class FavoritesRepository {
+public class FavoritesRepository  {
 
     private FavoriteDao mFavoriteDao;
     private LiveData<List<FavoriteItem>> mAllFavorites;
 
+    public interface AsyncResponse {
+        void getFavorites(List<FavoriteItem> items);
+    }
+
     public FavoritesRepository(Application application) {
         FavoritesRoomDB db = FavoritesRoomDB.getDatabase(application);
         mFavoriteDao = db.favoriteDao();
-        mAllFavorites = mFavoriteDao.selectAllFavorites();
+        mAllFavorites = mFavoriteDao.getAllFavorites();
     }
 
     public LiveData<List<FavoriteItem>> getAllFavorites() {
@@ -31,10 +35,6 @@ public class FavoritesRepository {
 
     public void deleteAllFavorites() {
         new deleteAllAsyncTask(mFavoriteDao).execute();
-    }
-
-    public LiveData<List<FavoriteItem>> selectFavorite(String name) {
-        return mFavoriteDao.selectFavorite(name);
     }
 
     private static class insertAsyncTask extends AsyncTask<FavoriteItem, Void, Void> {
