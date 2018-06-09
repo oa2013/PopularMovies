@@ -6,35 +6,35 @@ import android.os.Parcelable;
 
 public class DiscoverMovie implements Parcelable {
 
-    String page;
-    String totalResults;
-    String totalPages;
-    ArrayList<Result> results = null;
+    private String mPage;
+    private String mTotalResults;
+    private String mTotalPages;
+    private ArrayList<Result> mResults = null;
 
     public DiscoverMovie() {
 
     }
 
     public DiscoverMovie(String iPage, String iTotalResults, String iTotalPages, ArrayList<Result> iResults) {
-        this.page = iPage;
-        this.totalResults = iTotalResults;
-        this.totalPages = iTotalPages;
-        this.results = iResults;
+        this.mPage = iPage;
+        this.mTotalResults = iTotalResults;
+        this.mTotalPages = iTotalPages;
+        this.mResults = iResults;
     }
 
     private DiscoverMovie(Parcel in) {
-        page = in.readString();
-        totalResults =  in.readString();
-        totalPages = in.readString();
-        in.readTypedList(results, Result.CREATOR);
+        mPage = in.readString();
+        mTotalResults =  in.readString();
+        mTotalPages = in.readString();
+        in.readTypedList(mResults, Result.CREATOR);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(page);
-        dest.writeString(totalResults);
-        dest.writeString(totalPages);
-        dest.writeTypedList(results);
+        dest.writeString(mPage);
+        dest.writeString(mTotalResults);
+        dest.writeString(mTotalPages);
+        dest.writeTypedList(mResults);
     }
 
     @Override
@@ -43,35 +43,35 @@ public class DiscoverMovie implements Parcelable {
     }
 
     public String getPage() {
-        return page;
+        return mPage;
     }
 
     public void setPage(String page) {
-        this.page = page;
+        this.mPage = page;
     }
 
     public String getTotalResults() {
-        return totalResults;
+        return mTotalResults;
     }
 
     public void setTotalResults(String totalResults) {
-        this.totalResults = totalResults;
+        this.mTotalResults = totalResults;
     }
 
     public String getTotalPages() {
-        return totalPages;
+        return mTotalPages;
     }
 
     public void setTotalPages(String totalPages) {
-        this.totalPages = totalPages;
+        this.mTotalPages = totalPages;
     }
 
     public ArrayList<Result> getResults() {
-        return results;
+        return mResults;
     }
 
     public void setResults(ArrayList<Result> results) {
-        this.results = results;
+        this.mResults = results;
     }
 
     static final Parcelable.Creator<DiscoverMovie> CREATOR = new Parcelable.Creator<DiscoverMovie>() {

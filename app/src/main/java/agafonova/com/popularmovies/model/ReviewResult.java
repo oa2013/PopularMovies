@@ -5,35 +5,35 @@ import android.os.Parcelable;
 
 public class ReviewResult implements Parcelable {
 
-    String author;
-    String content;
-    String id;
-    String url;
+    private String mAuthor;
+    private String mContent;
+    private String mId;
+    private String mUrl;
 
     public ReviewResult() {
 
     }
 
     public ReviewResult(String iPage, String iTotalResults, String iID, String iUrl) {
-        this.author = iPage;
-        this.content = iTotalResults;
-        this.id = iID;
-        this.url = iUrl;
+        this.mAuthor = iPage;
+        this.mContent = iTotalResults;
+        this.mId = iID;
+        this.mUrl = iUrl;
     }
 
     private ReviewResult(Parcel in) {
-        author = in.readString();
-        content =  in.readString();
-        id = in.readString();
-        url = in.readString();
+        mAuthor = in.readString();
+        mContent =  in.readString();
+        mId = in.readString();
+        mUrl = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(author);
-        dest.writeString(content);
-        dest.writeString(id);
-        dest.writeString(url);
+        dest.writeString(mAuthor);
+        dest.writeString(mContent);
+        dest.writeString(mId);
+        dest.writeString(mUrl);
     }
 
     @Override
@@ -42,32 +42,32 @@ public class ReviewResult implements Parcelable {
     }
 
     public String getAuthor() {
-        return author;
+        return mAuthor;
     }
 
     public void setAuthor(String author) {
-        this.author = author;
+        this.mAuthor = author;
     }
 
     public String getContent() {
-        return content;
+        return mContent;
     }
 
     public void setContent(String content) {
-        this.content = content;
+        this.mContent = content;
     }
 
     public String getId() {
-        return id;
+        return mId;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.mId = id;
     }
 
-    public String getUrl() {return url; }
+    public String getUrl() {return mUrl; }
 
-    public void setUrl(String url) { this.url = url; }
+    public void setUrl(String url) { this.mUrl = url; }
 
     static final Parcelable.Creator<ReviewResult> CREATOR = new Parcelable.Creator<ReviewResult>() {
         @Override

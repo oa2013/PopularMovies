@@ -8,21 +8,21 @@ import android.os.Parcelable;
 
 public class Result implements Parcelable{
 
-    private String voteCount;
-    private String id;
-    private String video;
-    private String voteAverage;
-    private String title;
-    private String popularity;
-    private String posterPath;
-    private String originalLanguage;
-    private String originalTitle;
-    private List<String> genreIds = null;
-    private String backdropPath;
-    private String adult;
-    private String overview;
-    private String releaseDate;
-    private int isFavorite = 0;
+    private String mVoteCount;
+    private String mId;
+    private String mVideo;
+    private String mVoteAverage;
+    private String mTitle;
+    private String mPopularity;
+    private String mPosterPath;
+    private String mOriginalLanguage;
+    private String mOriginalTitle;
+    private List<String> mGenreIds = null;
+    private String mBackdropPath;
+    private String mAdult;
+    private String mOverview;
+    private String mReleaseDate;
+    private int mIsFavorite = 0;
 
     public Result() {
 
@@ -30,68 +30,68 @@ public class Result implements Parcelable{
 
     public Result(String iVoteCount, String iId, String iVideo, String iVoteAverage, String iTitle, String iPopularity, String iPosterPath, String iOriginalLanguage,
                   String iOriginalTitle, ArrayList<String> iGenreIds, String iBackdropPath, String iAdult, String iOverview, String iReleaseDate, int iIsFavorite) {
-        this.voteCount = iVoteCount;
-        this.id = iId;
-        this.video = iVideo;
-        this.voteAverage = iVoteAverage;
-        this.title = iTitle;
-        this.popularity = iPopularity;
-        this.posterPath = iPosterPath;
-        this.originalLanguage = iOriginalLanguage;
-        this.originalTitle = iOriginalTitle;
-        this.genreIds = iGenreIds;
-        this.backdropPath = iBackdropPath;
-        this.adult = iAdult;
-        this.overview = iOverview;
-        this.releaseDate = iReleaseDate;
-        this.isFavorite = iIsFavorite;
+        this.mVoteCount = iVoteCount;
+        this.mId = iId;
+        this.mVideo = iVideo;
+        this.mVoteAverage = iVoteAverage;
+        this.mTitle = iTitle;
+        this.mPopularity = iPopularity;
+        this.mPosterPath = iPosterPath;
+        this.mOriginalLanguage = iOriginalLanguage;
+        this.mOriginalTitle = iOriginalTitle;
+        this.mGenreIds = iGenreIds;
+        this.mBackdropPath = iBackdropPath;
+        this.mAdult = iAdult;
+        this.mOverview = iOverview;
+        this.mReleaseDate = iReleaseDate;
+        this.mIsFavorite = iIsFavorite;
     }
 
     Result(Parcel in) {
-        this.voteCount = in.readString();
-        this.id = in.readString();
-        this.video = in.readString();
-        this.voteAverage = in.readString();
-        this.title = in.readString();
-        this.popularity = in.readString();
-        this.posterPath = in.readString();
-        this.originalLanguage = in.readString();
-        this.originalTitle = in.readString();
+        this.mVoteCount = in.readString();
+        this.mId = in.readString();
+        this.mVideo = in.readString();
+        this.mVoteAverage = in.readString();
+        this.mTitle = in.readString();
+        this.mPopularity = in.readString();
+        this.mPosterPath = in.readString();
+        this.mOriginalLanguage = in.readString();
+        this.mOriginalTitle = in.readString();
 
-        this.genreIds = new ArrayList<String>();
-        in.readStringList(genreIds);
+        this.mGenreIds = new ArrayList<String>();
+        in.readStringList(mGenreIds);
 
-        this.backdropPath = in.readString();
-        this.adult = in.readString();
-        this.overview = in.readString();
-        this.releaseDate = in.readString();
-        this.isFavorite = in.readInt();
+        this.mBackdropPath = in.readString();
+        this.mAdult = in.readString();
+        this.mOverview = in.readString();
+        this.mReleaseDate = in.readString();
+        this.mIsFavorite = in.readInt();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(voteCount);
-        dest.writeString(id);
-        dest.writeString(video);
-        dest.writeString(voteAverage);
-        dest.writeString(title);
-        dest.writeString(popularity);
-        dest.writeString(posterPath);
-        dest.writeString(originalLanguage);
-        dest.writeString(originalTitle);
-        dest.writeStringList(genreIds);
-        dest.writeString(backdropPath);
-        dest.writeString(adult);
-        dest.writeString(overview);
-        dest.writeString(releaseDate);
-        dest.writeInt(isFavorite);
+        dest.writeString(mVoteCount);
+        dest.writeString(mId);
+        dest.writeString(mVideo);
+        dest.writeString(mVoteAverage);
+        dest.writeString(mTitle);
+        dest.writeString(mPopularity);
+        dest.writeString(mPosterPath);
+        dest.writeString(mOriginalLanguage);
+        dest.writeString(mOriginalTitle);
+        dest.writeStringList(mGenreIds);
+        dest.writeString(mBackdropPath);
+        dest.writeString(mAdult);
+        dest.writeString(mOverview);
+        dest.writeString(mReleaseDate);
+        dest.writeInt(mIsFavorite);
     }
 
     public static class RatingComparator implements Comparator<Result> {
 
         public int compare(Result one, Result two)
         {
-            double comparison = Double.parseDouble(two.voteAverage)-Double.parseDouble(one.voteAverage);
+            double comparison = Double.parseDouble(two.mVoteAverage)-Double.parseDouble(one.mVoteAverage);
             if(comparison > 0) return 1;
             if(comparison < 0) return -1;
             return 0;
@@ -102,7 +102,7 @@ public class Result implements Parcelable{
 
         public int compare(Result one, Result two)
         {
-            double comparison = Double.parseDouble(two.popularity)-Double.parseDouble(one.popularity);
+            double comparison = Double.parseDouble(two.mPopularity)-Double.parseDouble(one.mPopularity);
             if(comparison > 0) return 1;
             if(comparison < 0) return -1;
             return 0;
@@ -115,120 +115,120 @@ public class Result implements Parcelable{
     }
 
     public String getVoteCount() {
-        return voteCount;
+        return mVoteCount;
     }
 
     public void setVoteCount(String voteCount) {
-        this.voteCount = voteCount;
+        this.mVoteCount = voteCount;
     }
 
     public String getId() {
-        return id;
+        return mId;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.mId = id;
     }
 
     public String getVideo() {
-        return video;
+        return mVideo;
     }
 
     public void setVideo(String video) {
-        this.video = video;
+        this.mVideo = video;
     }
 
     public String getVoteAverage() {
-        return voteAverage;
+        return mVoteAverage;
     }
 
     public void setVoteAverage(String voteAverage) {
-        this.voteAverage = voteAverage;
+        this.mVoteAverage = voteAverage;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     public String getPopularity() {
-        return popularity;
+        return mPopularity;
     }
 
     public void setPopularity(String popularity) {
-        this.popularity = popularity;
+        this.mPopularity = popularity;
     }
 
     public String getPosterPath() {
-        return posterPath;
+        return mPosterPath;
     }
 
     public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
+        this.mPosterPath = posterPath;
     }
 
     public String getOriginalLanguage() {
-        return originalLanguage;
+        return mOriginalLanguage;
     }
 
     public void setOriginalLanguage(String originalLanguage) {
-        this.originalLanguage = originalLanguage;
+        this.mOriginalLanguage = originalLanguage;
     }
 
     public String getOriginalTitle() {
-        return originalTitle;
+        return mOriginalTitle;
     }
 
     public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
+        this.mOriginalTitle = originalTitle;
     }
 
     public List<String> getGenreIds() {
-        return genreIds;
+        return mGenreIds;
     }
 
     public void setGenreIds(List<String> genreIds) {
-        this.genreIds = genreIds;
+        this.mGenreIds = genreIds;
     }
 
     public String getBackdropPath() {
-        return backdropPath;
+        return mBackdropPath;
     }
 
     public void setBackdropPath(String backdropPath) {
-        this.backdropPath = backdropPath;
+        this.mBackdropPath = backdropPath;
     }
 
     public String getAdult() {
-        return adult;
+        return mAdult;
     }
 
     public void setAdult(String adult) {
-        this.adult = adult;
+        this.mAdult = adult;
     }
 
     public String getOverview() {
-        return overview;
+        return mOverview;
     }
 
     public void setOverview(String overview) {
-        this.overview = overview;
+        this.mOverview = overview;
     }
 
     public String getReleaseDate() {
-        return releaseDate;
+        return mReleaseDate;
     }
 
     public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
+        this.mReleaseDate = releaseDate;
     }
 
-    public int getIsFavorite() {return isFavorite; }
+    public int getIsFavorite() {return mIsFavorite; }
 
-    public void setIsFavorite(int isFavorite) { this.isFavorite = isFavorite; }
+    public void setIsFavorite(int isFavorite) { this.mIsFavorite = isFavorite; }
 
     public static final Parcelable.Creator<Result> CREATOR = new Parcelable.Creator<Result>() {
         @Override

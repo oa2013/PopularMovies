@@ -28,37 +28,10 @@ public abstract class FavoritesRoomDB extends RoomDatabase {
 
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             FavoritesRoomDB.class, "favorites_database")
-                            .addCallback(sRoomDatabaseCallback).build();
+                            .build();
                 }
             }
         }
         return INSTANCE;
-    }
-
-    private static RoomDatabase.Callback sRoomDatabaseCallback =
-            new RoomDatabase.Callback(){
-
-                @Override
-                public void onOpen (@NonNull SupportSQLiteDatabase db){
-                    super.onOpen(db);
-                    new PopulateDbAsync(INSTANCE).execute();
-                }
-            };
-
-    private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
-
-        private final FavoriteDao mDao;
-
-        PopulateDbAsync(FavoritesRoomDB db) {
-            mDao = db.favoriteDao();
-        }
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            mDao.deleteAllFavorites();
-            FavoriteItem item = new FavoriteItem("Test");
-            mDao.insert(item);
-            return null;
-        }
     }
 }

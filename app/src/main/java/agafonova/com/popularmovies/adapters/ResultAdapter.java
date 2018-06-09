@@ -20,7 +20,6 @@ import agafonova.com.popularmovies.viewmodel.FavoriteViewModel;
 public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultAdapterViewHolder>  {
 
     private static final String IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
-    private ImageView posterView;
     private List<Result> mMovieList;
     final private ResultAdapter.ResourceClickListener mOnClickListener;
     public MutableLiveData<List<FavoriteItem>> mFavoritesList;

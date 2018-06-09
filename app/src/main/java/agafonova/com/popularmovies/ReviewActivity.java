@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import agafonova.com.popularmovies.adapters.MovieReviewAdapter;
@@ -21,8 +22,6 @@ import butterknife.ButterKnife;
 
 public class ReviewActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, MovieReviewAdapter.ResourceClickListener {
 
-    private static final int loader1 = 1;
-
     @BindView(R.id.rv_reviews)
     RecyclerView mRecyclerView;
 
@@ -32,10 +31,10 @@ public class ReviewActivity extends AppCompatActivity implements LoaderManager.L
     @BindView(R.id.progressBarReview)
     ProgressBar progressBar;
 
-    private MovieReviewAdapter adapter;
+    private MovieReviewAdapter mAdapter;
     private String mApiKey;
     private String mMovieID;
-    private ArrayList<ReviewResult> reviewResults = null;
+    private ArrayList<ReviewResult> mReviewResults = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +57,8 @@ public class ReviewActivity extends AppCompatActivity implements LoaderManager.L
         }
 
         getReviews();
-
-        adapter = new MovieReviewAdapter(this);
-        mRecyclerView.setAdapter(adapter);
+        mAdapter = new MovieReviewAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -85,9 +83,15 @@ public class ReviewActivity extends AppCompatActivity implements LoaderManager.L
         progressBar.setVisibility(View.GONE);
 
         try {
-            reviewResults = JsonUtils.parseReviews(data);
-            adapter.setData(reviewResults);
-            adapter.notifyDataSetChanged();
+            mReviewResults = JsonUtils.parseReviews(data);
+
+            if(mReviewResults.size() > 0) {
+                mAdapter.setData(mReviewResults);
+                mAdapter.notifyDataSetChanged();
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "No reviews available", Toast.LENGTH_SHORT).show();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

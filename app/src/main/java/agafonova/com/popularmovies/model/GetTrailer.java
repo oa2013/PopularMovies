@@ -6,27 +6,27 @@ import java.util.ArrayList;
 
 public class GetTrailer implements Parcelable {
 
-    String id;
-    ArrayList<TrailerResult> results = null;
+    private String mId;
+    private ArrayList<TrailerResult> mResults = null;
 
     public GetTrailer() {
 
     }
 
     public GetTrailer(String iID, ArrayList<TrailerResult> iResults) {
-        this.id = iID;
-        this.results = iResults;
+        this.mId = iID;
+        this.mResults = iResults;
     }
 
     private GetTrailer(Parcel in) {
-        id = in.readString();
-        in.readTypedList(results, TrailerResult.CREATOR);
+        mId = in.readString();
+        in.readTypedList(mResults, TrailerResult.CREATOR);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeTypedList(results);
+        dest.writeString(mId);
+        dest.writeTypedList(mResults);
     }
 
     @Override
@@ -35,19 +35,19 @@ public class GetTrailer implements Parcelable {
     }
 
     public String getId() {
-        return id;
+        return mId;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.mId = id;
     }
 
     public ArrayList<TrailerResult> getResults() {
-        return results;
+        return mResults;
     }
 
     public void setResults(ArrayList<TrailerResult> results) {
-        this.results = results;
+        this.mResults = results;
     }
 
     static final Parcelable.Creator<GetTrailer> CREATOR = new Parcelable.Creator<GetTrailer>() {

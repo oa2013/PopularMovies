@@ -49,7 +49,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     private static final String IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
     private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
-    private static final int loader1 = 1;
 
     @BindView(R.id.title_text)
     TextView mTitleView;
@@ -67,7 +66,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     ImageView mPosterView;
 
     @BindView(R.id.progressBarDetail)
-    ProgressBar progressBar;
+    ProgressBar mProgressBar;
 
     @BindView(R.id.error_message_detail)
     TextView mErrorTextView;
@@ -81,14 +80,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @BindView(R.id.rv_trailers)
     RecyclerView mRecyclerView;
 
-    private TrailerAdapter adapter;
+    private TrailerAdapter mAdapter;
     private String mApiKey;
     private String mMovieID;
-    private ArrayList<TrailerResult> trailerResults = null;
-    private Result result;
+    private ArrayList<TrailerResult> mTrailerResults = null;
+    private Result mResult;
     private FavoriteViewModel mFavoriteItemViewModel;
-    private ArrayList<FavoriteItem> favoriteItemList = null;
-    private int mItemPosition;
+    private ArrayList<FavoriteItem> mFavoriteItemList = null;
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
 
     @Override
@@ -99,20 +97,20 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         try {
             Intent intent = getIntent();
-            result = intent.getParcelableExtra("Movies");
-            mTitleView.setText(result.getTitle());
+            mResult = intent.getParcelableExtra("Movies");
+            mTitleView.setText(mResult.getTitle());
 
             SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
-            Date releaseDate = format.parse(result.getReleaseDate());
+            Date releaseDate = format.parse(mResult.getReleaseDate());
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(releaseDate);
             int year = calendar.get(Calendar.YEAR);
 
             mReleaseDateView.setText(Integer.toString(year));
-            mVoteAverageView.setText(result.getVoteAverage() + "/10");
-            mPlotSynopsisView.setText(result.getOverview());
+            mVoteAverageView.setText(mResult.getVoteAverage() + "/10");
+            mPlotSynopsisView.setText(mResult.getOverview());
 
-            String imagePath = IMAGE_URL + result.getPosterPath();
+            String imagePath = IMAGE_URL + mResult.getPosterPath();
             Picasso.with(getApplicationContext()).load(imagePath).into(mPosterView);
 
             /**
@@ -127,7 +125,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             }
 
             mErrorTextView.setVisibility(View.INVISIBLE);
-            mMovieID = result.getId();
+            mMovieID = mResult.getId();
 
             /*
              * To Reviewers: you need to create an xml file in res/values
@@ -145,8 +143,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
             getMovieTrailers();
 
-            adapter = new TrailerAdapter(this);
-            mRecyclerView.setAdapter(adapter);
+            mAdapter = new TrailerAdapter(this);
+            mRecyclerView.setAdapter(mAdapter);
 
             mFavoriteItemViewModel = ViewModelProviders.of(this).get(FavoriteViewModel.class);
 
@@ -154,7 +152,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 @Override
                 public void onChanged(@Nullable final List<FavoriteItem> items) {
 
-                    favoriteItemList = new ArrayList<FavoriteItem>(items);
+                    mFavoriteItemList = new ArrayList<FavoriteItem>(items);
                 }
             });
 
@@ -162,7 +160,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getBaseContext(), ReviewActivity.class);
-                    intent.putExtra("MovieID", result.getId());
+                    intent.putExtra("MovieID", mResult.getId());
                     intent.putExtra("ApiKey", mApiKey);
                     startActivity(intent);
                 }
@@ -182,7 +180,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                             if(favoritesList != null) {
                                 //populate the static list with items from LiveData list
                                 for(FavoriteItem item : favoritesList) {
-                                    favoriteItemList.add(item);
+                                    mFavoriteItemList.add(item);
                                 }
                             }
                         }
@@ -190,7 +188,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
                     FavoriteItem existingItem = null;
 
-                    for(FavoriteItem item : favoriteItemList) {
+                    for(FavoriteItem item : mFavoriteItemList) {
                         if(item.getFavorite().contains(movieName)) {
                             existingItem = item;
                         }
@@ -229,20 +227,20 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
-        progressBar.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
         return new TrailerLoader(this, args.getString("apiKey"), args.getString("movieID"));
     }
 
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
-        progressBar.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
 
         try {
-            trailerResults = JsonUtils.parseTrailers(data);
+            mTrailerResults = JsonUtils.parseTrailers(data);
 
-            if(trailerResults != null) {
-               adapter.setData(trailerResults);
-               adapter.notifyDataSetChanged();
+            if(mTrailerResults != null) {
+               mAdapter.setData(mTrailerResults);
+               mAdapter.notifyDataSetChanged();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -256,10 +254,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onTrailerClick(String trailerID) {
 
-        if(trailerResults != null) {
-            for(int i=0; i<trailerResults.size(); i++) {
-                if (trailerResults.get(i).getId().equals(trailerID)) {
-                    String address = YOUTUBE_URL + trailerResults.get(i).getKey();
+        if(mTrailerResults != null) {
+            for(int i=0; i<mTrailerResults.size(); i++) {
+                if (mTrailerResults.get(i).getId().equals(trailerID)) {
+                    String address = YOUTUBE_URL + mTrailerResults.get(i).getKey();
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(address)));
                 }
             }

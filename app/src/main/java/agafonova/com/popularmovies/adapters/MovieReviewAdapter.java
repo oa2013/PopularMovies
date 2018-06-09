@@ -12,7 +12,6 @@ import agafonova.com.popularmovies.model.ReviewResult;
 
 public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.MovieReviewAdapterViewHolder> {
 
-    private static final String NO_REVIEWS = "No reviews available.";
     private List<ReviewResult> mReviewList;
     final private MovieReviewAdapter.ResourceClickListener mOnClickListener;
 
@@ -40,13 +39,7 @@ public class MovieReviewAdapter extends RecyclerView.Adapter<MovieReviewAdapter.
 
         try {
             holder.authorTextView.setText(oneReview.getAuthor());
-
-            if(mReviewList.size()>0) {
-                holder.contentTextView.setText(oneReview.getContent());
-            }
-            else {
-                holder.contentTextView.setText(NO_REVIEWS);
-            }
+            holder.contentTextView.setText(oneReview.getContent());
         }
         catch (Exception e) {
             e.printStackTrace();
