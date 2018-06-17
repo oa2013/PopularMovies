@@ -1,7 +1,5 @@
 package agafonova.com.popularmovies;
 
-import android.app.Activity;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -18,9 +16,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 import agafonova.com.popularmovies.adapters.ResultAdapter;
 import agafonova.com.popularmovies.db.FavoriteItem;
-import agafonova.com.popularmovies.db.FavoritesDBHelper;
 import agafonova.com.popularmovies.model.Result;
 import agafonova.com.popularmovies.util.DataLoader;
 import agafonova.com.popularmovies.util.DataLoader2;
@@ -43,11 +42,12 @@ import butterknife.ButterKnife;
 
 /*
 * @author Olga Agafonova
-* @date June 6, 2018
+* @date June 17, 2018
 * Android Nanodegree Movie Poster Project
 * */
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, ResultAdapter.ResourceClickListener{
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>,
+        ResultAdapter.ResourceClickListener, AdapterView.OnItemSelectedListener {
 
     private String mApiKey;
     private ArrayList<Result> mPopularityResults = null;
@@ -57,14 +57,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.rv_posters)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.sort_button_popularity)
-    Button mPopularityButton;
-
-    @BindView(R.id.sort_button_rating)
-    Button mRatingButton;
-
-    @BindView(R.id.sort_button_favorites)
-    Button mFavoritesButton;
+    @BindView(R.id.spinner)
+    Spinner mSpinner;
 
     @BindView(R.id.error_message)
     TextView mErrorTextView;
@@ -117,6 +111,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             e.printStackTrace();
             mApiKey = "";
         }
+
+        List<String> list = new ArrayList<String>();
+        list.add("Sort by popularity");
+        list.add("Sort by rating");
+        list.add("Sort by favorites");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinner.setAdapter(dataAdapter);
+        mSpinner.setOnItemSelectedListener(this);
 
         mFavoriteItemViewModel = ViewModelProviders.of(this).get(FavoriteViewModel.class);
 
@@ -179,6 +183,61 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int position, long id) {
+
+        switch (position) {
+            case 0:
+                mSortByPopularity = true;
+                mSortByRating = false;
+                mSortByFavorites = false;
+
+                if (mPopularityResults != null) {
+                    mAdapter.setData(mPopularityResults);
+                    mAdapter.notifyDataSetChanged();
+                }
+                break;
+
+            case 1:
+                mSortByRating = true;
+                mSortByPopularity = false;
+                mSortByFavorites = false;
+
+                if (mTopRatedResults != null) {
+                    mAdapter.setData(mTopRatedResults);
+                    mAdapter.notifyDataSetChanged();
+                }
+                break;
+
+            case 2:
+                mSortByFavorites = true;
+                mSortByRating = false;
+                mSortByPopularity = false;
+
+                ArrayList<Result> sortedMovies = getFavoriteMovies();
+                mAdapter.setData(sortedMovies);
+                mAdapter.notifyDataSetChanged();
+                break;
+
+            default:
+                mSortByPopularity = true;
+                mSortByRating = false;
+                mSortByFavorites = false;
+
+                if (mPopularityResults != null) {
+                    mAdapter.setData(mPopularityResults);
+                    mAdapter.notifyDataSetChanged();
+                }
+                break;
+        }
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
+
+
+
     private int numberOfColumns() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -198,49 +257,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
-
             getMoviesByAllCategories();
-
-            mPopularityButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mSortByPopularity = true;
-                    mSortByRating = false;
-                    mSortByFavorites = false;
-
-                    if (mPopularityResults != null) {
-                        mAdapter.setData(mPopularityResults);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
-
-            mRatingButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mSortByRating = true;
-                    mSortByPopularity = false;
-                    mSortByFavorites = false;
-
-                    if (mTopRatedResults != null) {
-                        mAdapter.setData(mTopRatedResults);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
-
-            mFavoritesButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mSortByFavorites = true;
-                    mSortByRating = false;
-                    mSortByPopularity = false;
-
-                    ArrayList<Result> sortedMovies = getFavoriteMovies();
-                    mAdapter.setData(sortedMovies);
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
         }
         else {
             mErrorTextView.setVisibility(View.VISIBLE);
@@ -251,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public ArrayList<Result> getFavoriteMovies() {
 
         mAllMovies = new ArrayList<Result>();
+        ArrayList<Result> onlyFavoriteMovies = new ArrayList<Result>();
         mAllMovies.addAll(mPopularityResults);
         mAllMovies.addAll(mTopRatedResults);
 
@@ -268,32 +286,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }
 
-        Set<Result> noDuplicates = new LinkedHashSet<Result>(mAllMovies);
+        for(int i=0; i<mAllMovies.size(); i++) {
+
+            if(mAllMovies.get(i).getIsFavorite() == 1) {
+                onlyFavoriteMovies.add(mAllMovies.get(i));
+            }
+
+         }
+
+        Set<Result> noDuplicates = new LinkedHashSet<Result>(onlyFavoriteMovies);
         ArrayList<Result> noDuplicatesList = new ArrayList<Result>();
         Iterator iterator = noDuplicates.iterator();
 
         while(iterator.hasNext()) {
             noDuplicatesList.add((Result)iterator.next());
         }
-
-        Comparator<Result> myComparator = new Comparator<Result>() {
-            @Override
-            public int compare(Result a, Result b) {
-
-                if(b.getIsFavorite() > a.getIsFavorite()) {
-                    return 1;
-                }
-                else if (b.getIsFavorite() < a.getIsFavorite()) {
-                    return -1;
-                }
-                else  {
-                    return 0;
-                }
-            }
-        };
-
-        //Requires minSdkVersion 24
-        Collections.sort(noDuplicatesList, myComparator);
 
         return noDuplicatesList;
     }

@@ -1,6 +1,5 @@
 package agafonova.com.popularmovies;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -28,13 +27,10 @@ import java.util.List;
 
 import agafonova.com.popularmovies.adapters.TrailerAdapter;
 import agafonova.com.popularmovies.db.FavoriteItem;
-import agafonova.com.popularmovies.db.FavoritesDBHelper;
 import agafonova.com.popularmovies.model.Result;
-import agafonova.com.popularmovies.model.ReviewResult;
 import agafonova.com.popularmovies.model.TrailerResult;
 import agafonova.com.popularmovies.util.JsonUtils;
 import agafonova.com.popularmovies.util.NetworkUtils;
-import agafonova.com.popularmovies.util.ReviewLoader;
 import agafonova.com.popularmovies.util.TrailerLoader;
 import agafonova.com.popularmovies.viewmodel.FavoriteViewModel;
 import butterknife.BindView;
