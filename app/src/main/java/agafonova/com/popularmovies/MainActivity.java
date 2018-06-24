@@ -18,13 +18,10 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -42,7 +39,7 @@ import butterknife.ButterKnife;
 
 /*
 * @author Olga Agafonova
-* @date June 17, 2018
+* @date June 24, 2018
 * Android Nanodegree Movie Poster Project
 * */
 

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -25,12 +26,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import agafonova.com.popularmovies.adapters.MovieReviewAdapter;
 import agafonova.com.popularmovies.adapters.TrailerAdapter;
 import agafonova.com.popularmovies.db.FavoriteItem;
 import agafonova.com.popularmovies.model.Result;
+import agafonova.com.popularmovies.model.ReviewResult;
 import agafonova.com.popularmovies.model.TrailerResult;
 import agafonova.com.popularmovies.util.JsonUtils;
 import agafonova.com.popularmovies.util.NetworkUtils;
+import agafonova.com.popularmovies.util.ReviewLoader;
 import agafonova.com.popularmovies.util.TrailerLoader;
 import agafonova.com.popularmovies.viewmodel.FavoriteViewModel;
 import butterknife.BindView;
@@ -41,7 +45,7 @@ import butterknife.ButterKnife;
  * @date June 1, 2018
  * Android Nanodegree Movie Poster Project
  * */
-public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, TrailerAdapter.ResourceClickListener {
+public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>, TrailerAdapter.ResourceClickListener, MovieReviewAdapter.ResourceClickListener {
 
     private static final String IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
     private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
@@ -67,14 +71,14 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @BindView(R.id.error_message_detail)
     TextView mErrorTextView;
 
-    @BindView(R.id.review_button)
-    ImageView mReviewButton;
-
     @BindView(R.id.favoriteButton)
     ImageView mFavoriteButton;
 
     @BindView(R.id.rv_trailers)
     RecyclerView mRecyclerView;
+
+    @BindView(R.id.rv_moviereviews)
+    RecyclerView mReviewRecyclerView;
 
     private TrailerAdapter mAdapter;
     private String mApiKey;
@@ -83,6 +87,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private Result mResult;
     private FavoriteViewModel mFavoriteItemViewModel;
     private ArrayList<FavoriteItem> mFavoriteItemList = null;
+
+    private MovieReviewAdapter mReviewAdapter;
+    private ArrayList<ReviewResult> mReviewResults = null;
+
+    private static final int mLoader1 = 1;
+    private static final int mLoader2 = 2;
+
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
 
     @Override
@@ -90,6 +101,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
+
+        //Enable the "Up" button
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         try {
             Intent intent = getIntent();
@@ -116,8 +131,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             mRecyclerView.setLayoutManager(layoutManager);
             mRecyclerView.setHasFixedSize(true);
 
-            if (getSupportLoaderManager().getLoader(1) != null) {
-                getSupportLoaderManager().initLoader(1, null, this);
+            GridLayoutManager layoutManager2 = new GridLayoutManager(DetailActivity.this, 1, GridLayoutManager.VERTICAL, false);
+            mReviewRecyclerView.setLayoutManager(layoutManager2);
+            mReviewRecyclerView.setHasFixedSize(true);
+
+            if (getSupportLoaderManager().getLoader(mLoader1) != null) {
+                getSupportLoaderManager().initLoader(mLoader1, null, this);
+            }
+
+            if (getSupportLoaderManager().getLoader(mLoader2) != null) {
+                getSupportLoaderManager().initLoader(mLoader2, null, this);
             }
 
             mErrorTextView.setVisibility(View.INVISIBLE);
@@ -138,9 +161,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             }
 
             getMovieTrailers();
+            getReviews();
 
             mAdapter = new TrailerAdapter(this);
             mRecyclerView.setAdapter(mAdapter);
+
+            mReviewAdapter = new MovieReviewAdapter(this);
+            mReviewRecyclerView.setAdapter(mReviewAdapter);
 
             mFavoriteItemViewModel = ViewModelProviders.of(this).get(FavoriteViewModel.class);
 
@@ -149,16 +176,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 public void onChanged(@Nullable final List<FavoriteItem> items) {
 
                     mFavoriteItemList = new ArrayList<FavoriteItem>(items);
-                }
-            });
-
-            mReviewButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getBaseContext(), ReviewActivity.class);
-                    intent.putExtra("MovieID", mResult.getId());
-                    intent.putExtra("ApiKey", mApiKey);
-                    startActivity(intent);
                 }
             });
 
@@ -224,7 +241,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
         mProgressBar.setVisibility(View.VISIBLE);
-        return new TrailerLoader(this, args.getString("apiKey"), args.getString("movieID"));
+
+        switch(id) {
+            case mLoader1:
+                return new TrailerLoader(this, args.getString("apiKey"), args.getString("movieID"));
+            case mLoader2:
+                return new ReviewLoader(this, args.getString("apiKey"), args.getString("movieID"));
+
+        }
+        return null;
     }
 
     @Override
@@ -232,12 +257,31 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mProgressBar.setVisibility(View.GONE);
 
         try {
-            mTrailerResults = JsonUtils.parseTrailers(data);
 
-            if(mTrailerResults != null) {
-               mAdapter.setData(mTrailerResults);
-               mAdapter.notifyDataSetChanged();
+            if(loader.getId() == 1) {
+                mTrailerResults = JsonUtils.parseTrailers(data);
+
+                if(mTrailerResults.size()>0) {
+                    mAdapter.setData(mTrailerResults);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getApplicationContext(), "No trailers available", Toast.LENGTH_SHORT).show();
+                }
             }
+
+            if(loader.getId() == 2) {
+                mReviewResults = JsonUtils.parseReviews(data);
+
+                if(mReviewResults.size()>0) {
+                    mReviewAdapter.setData(mReviewResults);
+                    mReviewAdapter.notifyDataSetChanged();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "No reviews available", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             mErrorTextView.setVisibility(View.VISIBLE);
@@ -259,4 +303,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             }
         }
     }
+
+    @Override
+    public void onReviewClick(String reviewID) {
+    }
+
+    public void getReviews() {
+        Bundle queryBundle = new Bundle();
+        queryBundle.putString("apiKey", mApiKey);
+        queryBundle.putString("movieID", mMovieID);
+        getSupportLoaderManager().restartLoader(mLoader2, queryBundle, this);
+    }
+
 }

@@ -22,9 +22,9 @@
         style="@style/Base.TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
         android:text="@string/placeholder"
         android:textColor="@color/colorAccent"
         app:layout_constraintBottom_toTopOf="@+id/poster_detail"
@@ -58,9 +58,9 @@
         android:id="@+id/plot_synopsis_sv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/detail_padding"
         android:layout_marginStart="@dimen/detail_padding"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="@dimen/detail_padding"
         android:fadeScrollbars="false"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -86,10 +86,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:progressBackgroundTint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -100,15 +100,11 @@
         android:id="@+id/error_message_detail"
         android:layout_width="368dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
         android:padding="@dimen/button_padding"
         android:text="@string/error_trailer"
         android:textColor="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/reviewText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rv_trailers" />
 
@@ -121,40 +117,72 @@
         app:layout_constraintTop_toTopOf="@+id/vote_average_text"
         app:srcCompat="@drawable/ic_star_black_24dp" />
 
-    <ImageView
-        android:id="@+id/review_button"
-        android:layout_width="51dp"
-        android:layout_height="42dp"
-        android:contentDescription="@string/placeholder"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vote_average_text"
-        app:srcCompat="@drawable/ic_feedback_black_24dp" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_trailers"
-        android:layout_width="0dp"
-        android:layout_height="185dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:fadeScrollbars="false"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/plot_synopsis_sv" />
+        app:layout_constraintTop_toBottomOf="@+id/trailerText" />
+
+    <include
+        android:id="@+id/moviereviews"
+        layout="@layout/movie_review"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reviewText" />
 
     <ImageView
         android:id="@+id/favoriteButton"
         android:layout_width="54dp"
         android:layout_height="42dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="296dp"
+        android:layout_marginTop="8dp"
         android:contentDescription="@string/placeholder"
-        app:layout_constraintEnd_toStartOf="@+id/review_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vote_average_text"
         app:srcCompat="@drawable/ic_favorite" />
+
+    <TextView
+        android:id="@+id/trailerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/trailers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/plot_synopsis_sv" />
+
+    <TextView
+        android:id="@+id/reviewText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/reviews"
+        app:layout_constraintBottom_toTopOf="@+id/moviereviews"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_trailers" />
 
 </android.support.constraint.ConstraintLayout>

@@ -14,13 +14,14 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN" 
+                    android:launchMode="singleTop"/>
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity" />
-        <activity android:name=".ReviewActivity"></activity>
+        <activity android:name=".DetailActivity"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
