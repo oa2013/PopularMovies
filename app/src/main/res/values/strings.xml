@@ -9,4 +9,7 @@
     <string name="error_review">Error: unable to load reviews</string>
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
+    <string name="add_favorites">Like/Dislike</string>
+    <string name="added">Liked</string>
+    <string name="deleted">Disliked</string>
 </resources>

@@ -75,7 +75,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     TextView mErrorTextView;
 
     @BindView(R.id.favoriteButton)
-    ImageView mFavoriteButton;
+    TextView mFavoriteButton;
 
     @BindView(R.id.rv_trailers)
     RecyclerView mRecyclerView;
@@ -219,10 +219,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                         //If this movie is already in the favorites table when we click on the button,
                         //then we delete it
                         mFavoriteItemViewModel.deleteById(existingItem.getId());
-                        ImageView favoriteButtonView = (ImageView)v.findViewById(R.id.favoriteButton);
-                        favoriteButtonView.setImageResource(R.drawable.ic_brokenheart);
+                        TextView favoriteButtonView = (TextView) v.findViewById(R.id.favoriteButton);
+                        favoriteButtonView.setText(getResources().getString(R.string.deleted));
 
-                        //Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show();
                         //Log.d(LOG_TAG, "favorite id deleted: " + existingItem.getId());
 
                     }
@@ -231,8 +230,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                         FavoriteItem newItem = new FavoriteItem();
                         newItem.setFavorite(movieName);
                         mFavoriteItemViewModel.insert(newItem);
+                        TextView favoriteButtonView = (TextView) v.findViewById(R.id.favoriteButton);
+                        favoriteButtonView.setText(getResources().getString(R.string.added));
 
-                        //Toast.makeText(getApplicationContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
                         //Log.d(LOG_TAG, "favorite added: " + newItem.getFavorite());
                     }
 
