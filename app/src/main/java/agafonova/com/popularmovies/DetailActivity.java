@@ -3,7 +3,10 @@ package agafonova.com.popularmovies;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -207,20 +210,30 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                         }
                     }
 
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("wasFavoriteButtonPressed","Yes");
+                    editor.apply();
+
                     if(existingItem != null) {
                         //If this movie is already in the favorites table when we click on the button,
                         //then we delete it
                         mFavoriteItemViewModel.deleteById(existingItem.getId());
-                        Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show();
-                        Log.d(LOG_TAG, "favorite id deleted: " + existingItem.getId());
+                        ImageView favoriteButtonView = (ImageView)v.findViewById(R.id.favoriteButton);
+                        favoriteButtonView.setImageResource(R.drawable.ic_brokenheart);
+
+                        //Toast.makeText(getApplicationContext(), "Deleted from favorites", Toast.LENGTH_SHORT).show();
+                        //Log.d(LOG_TAG, "favorite id deleted: " + existingItem.getId());
+
                     }
                     //else, we add it to the table
                     else {
                         FavoriteItem newItem = new FavoriteItem();
                         newItem.setFavorite(movieName);
                         mFavoriteItemViewModel.insert(newItem);
-                        Toast.makeText(getApplicationContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
-                        Log.d(LOG_TAG, "favorite added: " + newItem.getFavorite());
+
+                        //Toast.makeText(getApplicationContext(), "Added to favorites", Toast.LENGTH_SHORT).show();
+                        //Log.d(LOG_TAG, "favorite added: " + newItem.getFavorite());
                     }
 
                 }
@@ -314,5 +327,4 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         queryBundle.putString("movieID", mMovieID);
         getSupportLoaderManager().restartLoader(mLoader2, queryBundle, this);
     }
-
 }

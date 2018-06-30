@@ -5,8 +5,10 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -266,8 +268,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mAllMovies = new ArrayList<Result>();
         ArrayList<Result> onlyFavoriteMovies = new ArrayList<Result>();
-        mAllMovies.addAll(mPopularityResults);
-        mAllMovies.addAll(mTopRatedResults);
+
+        if(mPopularityResults != null) {
+            mAllMovies.addAll(mPopularityResults);
+        }
+
+        if(mTopRatedResults != null) {
+            mAllMovies.addAll(mTopRatedResults);
+        }
 
         if(mFavoriteItemArrayList!= null) {
 
@@ -345,10 +353,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 mTopRatedResults = JsonUtils.parseResults(data);
             }
 
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String favoriteButtonPressed = preferences.getString("wasFavoriteButtonPressed", "");
+
+            //If the Favorite Button was pressed in Detail Activity, we show movie favorites list
+            if(!favoriteButtonPressed.equalsIgnoreCase(""))
+            {
+                mSpinner.setSelection(2);
+                mSpinner.performClick();
+            }
+
             if(mSortByRating) {
                 mAdapter.setData(mTopRatedResults);
                 mAdapter.notifyDataSetChanged();
             }
+
             else {
                 mAdapter.setData(mPopularityResults);
                 mAdapter.notifyDataSetChanged();
