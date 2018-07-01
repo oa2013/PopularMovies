@@ -2,9 +2,9 @@ package agafonova.com.popularmovies;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -17,19 +17,19 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import agafonova.com.popularmovies.adapters.MovieReviewAdapter;
 import agafonova.com.popularmovies.adapters.TrailerAdapter;
 import agafonova.com.popularmovies.db.FavoriteItem;
@@ -100,12 +100,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private static final int mLoader2 = 2;
 
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
+    private boolean wasFavoriteButtonPressed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
+
+        wasFavoriteButtonPressed = false;
 
         //Enable the "Up" button
         ActionBar actionBar = getSupportActionBar();
@@ -189,6 +192,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     private void setFavoriteButtonIcon(Intent intent) {
@@ -228,6 +232,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mFavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                    wasFavoriteButtonPressed = true;
 
                     if(existingMovieItem !=null) {
                         mFavoriteItemViewModel.deleteById(existingMovieItem.getId());
@@ -332,4 +338,5 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         queryBundle.putString("movieID", mMovieID);
         getSupportLoaderManager().restartLoader(mLoader2, queryBundle, this);
     }
+
 }

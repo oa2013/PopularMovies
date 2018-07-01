@@ -65,10 +65,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
 
-    private boolean mSortByPopularity;
-    private boolean mSortByRating;
-    private boolean mSortByFavorites;
-
     private static final int mLoader1 = 1;
     private static final int mLoader2 = 2;
 
@@ -76,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ArrayList<FavoriteItem> mFavoriteItemArrayList = null;
     private ArrayList<Result> mAllMovies = null;
     private FavoriteViewModel mFavoriteItemViewModel;
+
+    private String mSpinnerPosition = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,17 +143,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if(savedInstanceState == null) {
 
-            mSortByRating = false;
-            mSortByPopularity = false;
-            mSortByFavorites = false;
-
             checkNetworkAndGetData();
         }
         else if (savedInstanceState != null){
-
-            mSortByPopularity = savedInstanceState.getBoolean("sortByPopularity");
-            mSortByRating = savedInstanceState.getBoolean("sortByRating");
-            mSortByFavorites = savedInstanceState.getBoolean("sortByFavorites");
 
             mPopularityResults = savedInstanceState.getParcelableArrayList("moviesPopular");
             mTopRatedResults = savedInstanceState.getParcelableArrayList("moviesTopRated");
@@ -163,21 +153,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             mRecyclerView.setAdapter(mAdapter);
 
-            if (mSortByPopularity) {
-                mAdapter.setData(mPopularityResults);
-                mAdapter.notifyDataSetChanged();
-            }
-
-            if (mSortByRating) {
-                mAdapter.setData(mTopRatedResults);
-                mAdapter.notifyDataSetChanged();
-            }
-
-            if(mSortByFavorites) {
-                ArrayList<Result> sortedMovies = getFavoriteMovies();
-                mAdapter.setData(sortedMovies);
-                mAdapter.notifyDataSetChanged();
-            }
+            checkNetworkAndGetData();
 
         }
     }
@@ -185,12 +161,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onItemSelected(AdapterView<?> parent, View view,
                                int position, long id) {
 
+        loadSelectedMovies(position);
+    }
+
+    private void loadSelectedMovies(int position) {
+
         switch (position) {
             case 0:
-                mSortByPopularity = true;
-                mSortByRating = false;
-                mSortByFavorites = false;
-
                 if (mPopularityResults != null) {
                     mAdapter.setData(mPopularityResults);
                     mAdapter.notifyDataSetChanged();
@@ -198,10 +175,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 break;
 
             case 1:
-                mSortByRating = true;
-                mSortByPopularity = false;
-                mSortByFavorites = false;
-
                 if (mTopRatedResults != null) {
                     mAdapter.setData(mTopRatedResults);
                     mAdapter.notifyDataSetChanged();
@@ -209,20 +182,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 break;
 
             case 2:
-                mSortByFavorites = true;
-                mSortByRating = false;
-                mSortByPopularity = false;
-
                 ArrayList<Result> sortedMovies = getFavoriteMovies();
                 mAdapter.setData(sortedMovies);
                 mAdapter.notifyDataSetChanged();
                 break;
 
             default:
-                mSortByPopularity = true;
-                mSortByRating = false;
-                mSortByFavorites = false;
-
                 if (mPopularityResults != null) {
                     mAdapter.setData(mPopularityResults);
                     mAdapter.notifyDataSetChanged();
@@ -234,8 +199,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onNothingSelected(AdapterView<?> parent) {
         // Another interface callback
     }
-
-
 
     private int numberOfColumns() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -353,11 +316,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 mTopRatedResults = JsonUtils.parseResults(data);
             }
 
-            if(mSortByRating) {
+            if(mSpinnerPosition.contains("0")) {
+                mSpinner.setSelection(0);
+                mAdapter.setData(mPopularityResults);
+                mAdapter.notifyDataSetChanged();
+            }
+            else if(mSpinnerPosition.contains("1")) {
+                mSpinner.setSelection(1);
                 mAdapter.setData(mTopRatedResults);
                 mAdapter.notifyDataSetChanged();
             }
-
+            else if(mSpinnerPosition.contains("2")) {
+                mSpinner.setSelection(2);
+                ArrayList<Result> sortedMovies = getFavoriteMovies();
+                mAdapter.setData(sortedMovies);
+                mAdapter.notifyDataSetChanged();
+            }
             else {
                 mAdapter.setData(mPopularityResults);
                 mAdapter.notifyDataSetChanged();
@@ -378,6 +352,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onPosterClick(String movieID) {
         Intent intent = new Intent(getBaseContext(), DetailActivity.class);
+
+        //save spinner position
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("spinnerPosition",String.valueOf(mSpinner.getSelectedItemPosition()));
+        editor.commit();
 
         for(Result movieResult : mPopularityResults)
         {
@@ -401,7 +381,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onResume() {
         super.onResume();
-        checkNetworkAndGetData();
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);;
+        mSpinnerPosition = sharedPref.getString("spinnerPosition", "");
     }
 
     @Override
@@ -409,9 +391,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         outState.putParcelableArrayList("moviesPopular", mPopularityResults);
         outState.putParcelableArrayList("moviesTopRated", mTopRatedResults);
         outState.putParcelableArrayList("moviesFavorite", mFavoriteItemArrayList);
-        outState.putBoolean("sortByPopularity",mSortByPopularity);
-        outState.putBoolean("sortByRating",mSortByRating);
-        outState.putBoolean("sortByFavorites",mSortByFavorites);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -421,9 +401,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mPopularityResults = savedInstanceState.getParcelableArrayList("moviesPopular");
         mTopRatedResults = savedInstanceState.getParcelableArrayList("moviesTopRated");
         mFavoriteItemArrayList = savedInstanceState.getParcelableArrayList("moviesFavorite");
-        mSortByPopularity = savedInstanceState.getBoolean("sortByPopularity");
-        mSortByRating = savedInstanceState.getBoolean("sortByRating");
-        mSortByFavorites = savedInstanceState.getBoolean("sortByFavorites");
     }
 
 }
