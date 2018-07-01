@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
@@ -75,7 +76,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     TextView mErrorTextView;
 
     @BindView(R.id.favoriteButton)
-    TextView mFavoriteButton;
+    FloatingActionButton mFavoriteButton;
 
     @BindView(R.id.rv_trailers)
     RecyclerView mRecyclerView;
@@ -93,6 +94,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     private MovieReviewAdapter mReviewAdapter;
     private ArrayList<ReviewResult> mReviewResults = null;
+    private FavoriteItem existingMovieItem = null;
 
     private static final int mLoader1 = 1;
     private static final int mLoader2 = 2;
@@ -113,6 +115,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             Intent intent = getIntent();
             mResult = intent.getParcelableExtra("Movies");
             mTitleView.setText(mResult.getTitle());
+            mMovieID = mResult.getId();
 
             SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
             Date releaseDate = format.parse(mResult.getReleaseDate());
@@ -147,7 +150,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             }
 
             mErrorTextView.setVisibility(View.INVISIBLE);
-            mMovieID = mResult.getId();
 
             /*
              * To Reviewers: you need to create an xml file in res/values
@@ -182,66 +184,69 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 }
             });
 
-            mFavoriteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = getIntent();
-                    Result currentResult = intent.getParcelableExtra("Movies");
-                    String movieName = currentResult.getTitle();
-
-                    mFavoriteItemViewModel.getAllFavorites().observe(DetailActivity.this, new Observer<List<FavoriteItem>>() {
-                        @Override
-                        public void onChanged(@Nullable final List<FavoriteItem> favoritesList) {
-
-                            if(favoritesList != null) {
-                                //populate the static list with items from LiveData list
-                                for(FavoriteItem item : favoritesList) {
-                                    mFavoriteItemList.add(item);
-                                }
-                            }
-                        }
-                    });
-
-                    FavoriteItem existingItem = null;
-
-                    for(FavoriteItem item : mFavoriteItemList) {
-                        if(item.getFavorite().contains(movieName)) {
-                            existingItem = item;
-                        }
-                    }
-
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("wasFavoriteButtonPressed","Yes");
-                    editor.apply();
-
-                    if(existingItem != null) {
-                        //If this movie is already in the favorites table when we click on the button,
-                        //then we delete it
-                        mFavoriteItemViewModel.deleteById(existingItem.getId());
-                        TextView favoriteButtonView = (TextView) v.findViewById(R.id.favoriteButton);
-                        favoriteButtonView.setText(getResources().getString(R.string.deleted));
-
-                        //Log.d(LOG_TAG, "favorite id deleted: " + existingItem.getId());
-
-                    }
-                    //else, we add it to the table
-                    else {
-                        FavoriteItem newItem = new FavoriteItem();
-                        newItem.setFavorite(movieName);
-                        mFavoriteItemViewModel.insert(newItem);
-                        TextView favoriteButtonView = (TextView) v.findViewById(R.id.favoriteButton);
-                        favoriteButtonView.setText(getResources().getString(R.string.added));
-
-                        //Log.d(LOG_TAG, "favorite added: " + newItem.getFavorite());
-                    }
-
-                }
-            });
+            setFavoriteButtonIcon(intent);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void setFavoriteButtonIcon(Intent intent) {
+
+        Intent movieIntent = getIntent();
+        Result currentResult = intent.getParcelableExtra("Movies");
+        String movieName = currentResult.getTitle();
+
+        mFavoriteItemViewModel.getAllFavorites().observe(DetailActivity.this, new Observer<List<FavoriteItem>>() {
+            @Override
+            public void onChanged(@Nullable final List<FavoriteItem> favoritesList) {
+
+                   if(favoritesList.size() > 0) {
+
+                        for (FavoriteItem item : favoritesList) {
+                            if (item.getFavorite().contains(movieName)) {
+                                existingMovieItem = item;
+                            }
+                        }
+
+                        if (existingMovieItem != null) {
+                            mFavoriteButton.setImageResource(R.drawable.ic_favorite);
+                            Log.d(LOG_TAG, "FAVORITE");
+
+                        } else {
+                            mFavoriteButton.setImageResource(R.drawable.ic_favorite_empty);
+                            Log.d(LOG_TAG, "NOT A FAVORITE");
+                        }
+                    }
+                    else {
+                        mFavoriteButton.setImageResource(R.drawable.ic_favorite_empty);
+                        Log.d(LOG_TAG, "NOT A FAVORITE");
+                    }
+            }
+        });
+
+        mFavoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                    if(existingMovieItem !=null) {
+                        mFavoriteItemViewModel.deleteById(existingMovieItem.getId());
+                        mFavoriteButton.setImageResource(R.drawable.ic_favorite_empty);
+
+                        Log.d(LOG_TAG, "favorite id deleted: " + existingMovieItem.getId());
+                    }
+                    else {
+                        //Item not found, so add it to the database
+                        FavoriteItem newItem = new FavoriteItem();
+                        newItem.setFavorite(mResult.getTitle());
+                        mFavoriteItemViewModel.insert(newItem);
+                        mFavoriteButton.setImageResource(R.drawable.ic_favorite);;
+
+                        Log.d(LOG_TAG, "favorite added: " + newItem.getFavorite());
+
+                    }
+            }
+        });
     }
 
     public void getMovieTrailers() {

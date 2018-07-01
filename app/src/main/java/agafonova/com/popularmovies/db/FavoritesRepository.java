@@ -25,6 +25,10 @@ public class FavoritesRepository  {
         return mAllFavorites;
     }
 
+    public LiveData<Integer> isFavoriteMovie(int id) {
+        return mFavoriteDao.isFavoriteMovie(id);
+    }
+
     public void insert(FavoriteItem item) {
         new insertAsyncTask(mFavoriteDao).execute(item);
     }

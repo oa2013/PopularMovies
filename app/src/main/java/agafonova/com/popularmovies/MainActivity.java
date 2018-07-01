@@ -353,16 +353,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 mTopRatedResults = JsonUtils.parseResults(data);
             }
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String favoriteButtonPressed = preferences.getString("wasFavoriteButtonPressed", "");
-
-            //If the Favorite Button was pressed in Detail Activity, we show movie favorites list
-            if(!favoriteButtonPressed.equalsIgnoreCase(""))
-            {
-                mSpinner.setSelection(2);
-                mSpinner.performClick();
-            }
-
             if(mSortByRating) {
                 mAdapter.setData(mTopRatedResults);
                 mAdapter.notifyDataSetChanged();

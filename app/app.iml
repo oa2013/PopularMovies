@@ -122,8 +122,10 @@
     <orderEntry type="library" name="com.android.support:animated-vector-drawable-27.1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="com.google.code.gson:gson:2.8.0@jar" level="project" />
     <orderEntry type="library" name="com.android.support:appcompat-v7-27.1.1" level="project" />
+    <orderEntry type="library" name="com.android.support:design-27.1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="junit:junit:4.12@jar" level="project" />
     <orderEntry type="library" name="android.arch.core:common:1.1.0@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:transition-27.1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="com.android.support.test.espresso:espresso-core-3.0.2" level="project" />
     <orderEntry type="library" name="com.jakewharton:butterknife-annotations:8.4.0@jar" level="project" />
     <orderEntry type="library" scope="TEST" name="javax.inject:javax.inject:1@jar" level="project" />
@@ -161,7 +163,9 @@
     <orderEntry type="library" name="com.squareup.picasso:picasso:2.5.2@jar" level="project" />
     <orderEntry type="library" name="android.arch.persistence.room:common:1.0.0@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-fragment-27.1.1" level="project" />
+    <orderEntry type="library" name="com.android.support:support-media-compat-27.1.1" level="project" />
     <orderEntry type="library" name="com.android.support:support-annotations:27.1.1@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:support-v4-27.1.1" level="project" />
     <orderEntry type="library" name="android.arch.core:runtime-1.1.0" level="project" />
   </component>
 </module>

@@ -19,6 +19,9 @@ public class FavoriteViewModel extends AndroidViewModel {
         mAllFavorites = mRepository.getAllFavorites();
     }
 
+    public LiveData<Integer> isFavoriteMovie(int id) {
+        return mRepository.isFavoriteMovie(id);
+    }
     public LiveData<List<FavoriteItem>> getAllFavorites() {
         return mAllFavorites;
     }
